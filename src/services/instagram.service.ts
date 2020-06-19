@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IMedia } from '../models/Media';
+import { Media } from '../models/Media';
 
 interface IRequestParams {
     igAccountId: string, 
@@ -23,7 +23,7 @@ export const getMediaIds = async ({ igAccountId, token }: IRequestParams) => {
 
 export const getMedia = async ({ igAccountId, token }: IRequestParams) => {
     const mediaIds = await getMediaIds({ igAccountId, token });
-    const medias: IMedia[] = [];
+    const medias: Media[] = [];
     for(const media of mediaIds) {
         const { data } = await axios.get(`/${media.id}`, {
             params: {

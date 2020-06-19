@@ -1,10 +1,10 @@
-import { IIGUser } from './User'
+import { IGUser } from './User'
 
 enum MediaType {
     IMAGE= 'IMAGE', VIDEO= 'VIDEO', CAROUSEL_ALBUM= 'CAROUSEL_ALBUM',
 }
 
-export interface IMedia {
+export interface Media {
     caption?: string, // (excludes album children)
     children: any, // (carousel albums only)
     comments: any[], // (excludes album children, replies to comments, and the caption)
@@ -15,7 +15,7 @@ export interface IMedia {
     like_count: number, // (excludes album children and likes on promoted posts created from the media object, includes replies)
     media_type: MediaType,
     media_url: string, // (not available on video IG Media objects that have been flagged for copyright violations)
-    owner: IIGUser, // (only returned if the IG User making the query also owns the IG Media object, otherwise the username field will be included)
+    owner: IGUser, // (only returned if the IG User making the query also owns the IG Media object, otherwise the username field will be included)
     permalink: string,
     shortcode: string,
     thumbnail_url: string, // (only available on video IG Media objects)
