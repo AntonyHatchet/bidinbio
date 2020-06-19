@@ -45,7 +45,7 @@ app.set("view engine", "pug");
 app.use(compression());
 app.use(bodyParser.json({
     verify: (req: IncomingMessage & { rawBody: any }, res, buf) => {
-        req.rawBody = buf
+        req.rawBody = buf;
     }
 }));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -68,7 +68,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use((req, res, next) => {
-    console.log({method: req.method, path:req.path})
+    console.log({method: req.method, path:req.path});
     // After successful login, redirect back to the intended page
     if (!req.user &&
     req.path !== "/login" &&
@@ -115,11 +115,11 @@ app.get("/api", apiController.getApi);
 app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 app.post("/api/v1/hooks/instagram", hooksController.authorizeHook, (req, res) => {
     console.log(req.body);
-    res.send(req.body)
+    res.send(req.body);
 });
 app.get("/api/v1/hooks/instagram", hooksController.authorizeHook, (req, res) => {
     console.log(req.query);
-    res.send(req.query['hub.challenge'])
+    res.send(req.query["hub.challenge"]);
 });
 
 /**

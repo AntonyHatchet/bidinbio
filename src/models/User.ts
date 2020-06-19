@@ -2,17 +2,18 @@ import bcrypt from "bcrypt-nodejs";
 import crypto from "crypto";
 import mongoose from "mongoose";
 
+//@typescript-eslint/interface-name-prefix
 export interface IGUser {
-    biography: any,
-    id: string,
-    ig_id: string,
-    followers_count: number,
-    follows_count: number,
-    media_count: number,
-    name: string,
-    profile_picture_url: string,
-    username: string,
-    website: string,
+    biography: any;
+    id: string;
+    ig_id: string;
+    followers_count: number;
+    follows_count: number;
+    media_count: number;
+    name: string;
+    profile_picture_url: string;
+    username: string;
+    website: string;
 }
 export type UserDocument = mongoose.Document & {
     email: string;
