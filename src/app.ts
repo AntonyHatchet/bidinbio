@@ -22,6 +22,7 @@ import * as contactController from "./controllers/contact";
 
 // API keys and Passport configuration
 import * as passportConfig from "./config/passport";
+import { IncomingMessage } from "http";
 
 // Create Express server
 const app = express();
@@ -43,7 +44,7 @@ app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "pug");
 app.use(compression());
 app.use(bodyParser.json({
-    verify: (req, res, buf) => {
+    verify: (req: IncomingMessage & { rawBody: any }, res, buf) => {
         req.rawBody = buf
     }
 }));
