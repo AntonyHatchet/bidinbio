@@ -1,0 +1,8 @@
+src/**/*.d.ts
+src/tests/assets/**/*.*
+src/openapi.json
+src/tsconfig.strict.json
+src/types/**/*
+cron.yaml
+.keep
+.DS_Store
