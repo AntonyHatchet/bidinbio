@@ -1,0 +1,15 @@
+.auction {
+  display: flex;
+  justify-content: space-between;
+
+  .left-block {
+    width: 40%;
+
+    img {
+      width: 100%;
+    }
+  }
+  .right-block {
+    width: 40%;
+  }
+}

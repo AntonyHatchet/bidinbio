@@ -3,8 +3,8 @@
 import axios from "axios";
 import { Response, Request, NextFunction } from "express";
 import { AuthToken, UserDocument } from "../models/User";
-import { getBussinessAccount, getFacebookUser } from "../services/facebook.service";
-import { getIGUser, getMedia } from "../services/instagram.service";
+import { getBussinessAccount, getFacebookUser, subscribeToPageWebhooks } from "../services/facebook.service";
+import { createCommentForMedia, loadIGUser, loadAllMedia } from "../services/instagram.service";
 
 axios.defaults.baseURL = "https://graph.facebook.com/v7.0";
 /**
@@ -21,26 +21,37 @@ export const getApi = (req: Request, res: Response) => {
  * GET /api/facebook
  * Facebook API example.
  */
-export const getFacebook = async (req: Request, res: Response, next: NextFunction) => {
+export const setupAccount = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as UserDocument;
     const token = user.tokens.find((token: AuthToken) => token.kind === "facebook");
     const me = await getFacebookUser(token.accessToken);
     const accounts = me.accounts || { data: []};
-    const instagramBusinessAccounts = new Set<string>();
+    const instagramBusinessAccountIds = new Set<string>();
 
     for(const account of accounts.data) {
-        const instagramBusinessAccount = await getBussinessAccount(account.id, token.accessToken);
-        if(instagramBusinessAccount && instagramBusinessAccount.id){
-            instagramBusinessAccounts.add(instagramBusinessAccount.id);
+        const { instagramBusinessAccount, pageId } = await getBussinessAccount(account.id, token.accessToken);
+
+        if(pageId){
+            await subscribeToPageWebhooks(pageId, token.accessToken);
         }
+
+        if(instagramBusinessAccount && instagramBusinessAccount.id) {
+            instagramBusinessAccountIds.add(instagramBusinessAccount.id);
+        }
+    }
+
+    const IGUsers = [];
+    for(const igAccountId of instagramBusinessAccountIds) {
+        const account = await loadIGUser({igAccountId, token: token.accessToken})
+        IGUsers.push(account)
     }
 
     interface MediaType {
         [key: string]: any;
     }
     const mediaByProfile: MediaType = {};
-    for(const igaccount of instagramBusinessAccounts) {
-        const medias = await getMedia({igAccountId: igaccount, token: token.accessToken});
+    for(const igaccount of instagramBusinessAccountIds) {
+        const medias = await loadAllMedia({igAccountId: igaccount, token: token.accessToken});
 
         for(const media of medias) {
             if(!mediaByProfile[igaccount]){
@@ -49,15 +60,10 @@ export const getFacebook = async (req: Request, res: Response, next: NextFunctio
             mediaByProfile[igaccount].push(media);
         }
     }
-    let IGUser = {};
-
-    if(instagramBusinessAccounts.size > 0){
-        IGUser = await getIGUser({igAccountId: instagramBusinessAccounts.values().next().value, token: token.accessToken});
-    }
 
     res.render("api/facebook", {
         title: "Facebook API",
-        profile: {...me, ...IGUser, mediaByProfile}
+        profile: {...me, IGUsers}
     });
 };
 

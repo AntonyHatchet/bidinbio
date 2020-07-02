@@ -84,7 +84,7 @@ block content
   .form-horizontal
     .form-group.row.justify-content-md-center
       .offset-sm-3.col-sm-7
-        if user.facebook
+        if user.facebookAccountId
           p: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
         else
           p: a(href='/auth/facebook') Link your Facebook account

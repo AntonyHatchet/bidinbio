@@ -1,9 +1,13 @@
-@import "themes/default/variables";
+@import 'themes/default/variables';
 
-@import "lib/bootstrap/bootstrap";
-@import "lib/font-awesome/font-awesome";
+@import 'lib/bootstrap/bootstrap';
+@import 'lib/datepicker';
+@import 'lib/font-awesome/font-awesome';
 
-@import "themes/default/default";
+@import 'themes/default/default';
+
+@import 'pages/auction/index';
+@import 'pages/instagram/index';
 
 // Scaffolding
 // -------------------------
@@ -23,7 +27,8 @@ footer {
   bottom: 0;
   width: 100%;
 
-  p, ul {
+  p,
+  ul {
     margin-bottom: 0;
   }
 }

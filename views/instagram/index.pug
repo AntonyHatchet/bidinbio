@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+  h3
+    i.fa.fa-user
+    |  My Profile
+  img.thumbnail(src=account.profile_picture_url || 'https://gravatar.com/avatar/?d=retro', width='90', height='90', alt=(account.name || account.username))
+  h4=account.username
+  h6 Name: #{account.name}
+  h6 Followers: #{account.followers_count}
+  h6 Follows: #{account.follows_count}
+
+
+  h6 Media:
+  div.medias
+    each media in medias
+      div.media
+        a(href=media.permalink, target='_blank')
+          img(src=media.media_url)
+        form(action=`/auction/${media.auctionId? media.auctionId : `new/${media.id}`}`)
+          button(type='submit') #{media.auctionId ? 'Open auction' : 'Create auction'}

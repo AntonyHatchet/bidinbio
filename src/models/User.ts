@@ -21,7 +21,7 @@ export type UserDocument = mongoose.Document & {
     passwordResetToken: string;
     passwordResetExpires: Date;
 
-    facebook: string;
+    facebookAccountId: string;
     tokens: AuthToken[];
 
     profile: {
@@ -31,6 +31,10 @@ export type UserDocument = mongoose.Document & {
         website: string;
         picture: string;
     };
+
+    bussinessAccounts: {
+        facebook: string[];
+    }
 
     comparePassword: comparePasswordFunction;
     gravatar: (size: number) => string;
@@ -49,9 +53,9 @@ const userSchema = new mongoose.Schema({
     passwordResetToken: String,
     passwordResetExpires: Date,
 
-    facebook: String,
-    twitter: String,
-    google: String,
+    facebookAccountId: String,
+    twitterAccountId: String,
+    googleAccountId: String,
     tokens: Array,
 
     profile: {
@@ -60,6 +64,9 @@ const userSchema = new mongoose.Schema({
         location: String,
         website: String,
         picture: String
+    },
+    bussinessAccounts: {
+        facebook: Array,
     }
 }, { timestamps: true });
 

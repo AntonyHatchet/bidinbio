@@ -1,0 +1,44 @@
+extends ../layout
+
+block content
+  h3
+    i.fa.fa-user
+    |  New Auction
+  
+  .auction
+    .left-block
+      img(src=media.media_url)
+      p= media.caption
+    .right-block
+      form(action=`/auction/new/${media.id}`, method='post')
+        .form-group.row.justify-content-md-center
+          .col-sm-12
+            label.col-sm-12.col-form-label.text-left.font-weight-bold(for='price') Start price
+            .col-sm-12
+              input.form-control(type='number', name='price', id='price')
+        .form-group.row.justify-content-md-center
+          .col-sm-12
+            label.col-sm-12.col-form-label.text-left.font-weight-bold(for='step') Step
+            .col-sm-12
+              input.form-control(type='number', name='step', id='step')
+        .form-group.row.justify-content-md-center
+          .input-daterange.col-sm-12
+            label.col-sm-12.col-form-label.text-left.font-weight-bold(for='start') Start at
+            .col-sm-12(id='time_start')
+              input.form-control(type='text', name='start', id='start')
+            label.col-sm-12.col-form-label.text-left.font-weight-bold(for='end') End at
+            .col-sm-12(id='time_end')
+              input.form-control(type='text', name='end', id='end', autocomplete='off')
+              span.input-group-addon
+                span.glyphicon.glyphicon-calendar
+        .form-group.row.justify-content-md-center
+          .col-sm-12
+            label.col-sm-12.col-form-label.text-left.font-weight-bold(for='prolongation') Prolongation in minutes
+            .col-sm-12
+              input.form-control(type='number', name='prolongation', id='prolongation')
+
+        .form-group.row.justify-content-md-center
+          .col-sm-4
+            button.btn.btn.btn-primary(type='submit')
+              i.fa.fa-pencil
+              | Create auction

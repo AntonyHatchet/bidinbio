@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+  h3
+    i.fa.fa-user
+    | Auction
+  
+  .auction
+    .left-block
+      img(src=auction.media.media_url)
+      p= auction.media.caption
+    .right-block
+      .form-group.row.justify-content-md-center
+        .col-sm-12
+          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='price') Start price
+          .col-sm-12
+            p=auction.price
+      .form-group.row.justify-content-md-center
+        .col-sm-12
+          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='step') Step
+          .col-sm-12
+            p=auction.step
+      .form-group.row.justify-content-md-center
+        .input-daterange.col-sm-12
+          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='start') Start at
+          .col-sm-12(id='time_start')
+            p=auction.start
+          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='end') End at
+          .col-sm-12(id='time_end')
+            p=auction.end
+      .form-group.row.justify-content-md-center
+        .col-sm-12
+          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='prolongation') Prolongation in minutes
+          .col-sm-12
+            p=auction.prolongation
+      form(action=`/auction/${auction.media.id}`, method='delete')
+        .form-group.row.justify-content-md-center
+          .col-sm-4
+            button.btn.btn.btn-primary(type='submit')
+              i.fa.fa-pencil
+              | Cancel auction

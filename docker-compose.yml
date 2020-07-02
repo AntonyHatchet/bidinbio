@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  mongo:
+    container_name: backend_mongo
+    image: mongo:latest
+    networks:
+      - bib-bridge
+    ports:
+      - 27017:27017
+
+networks:
+  bib-bridge:
