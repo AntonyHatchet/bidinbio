@@ -3,7 +3,7 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import passport from "passport";
 import { User, UserDocument, AuthToken } from "../models/User";
-import { Auction } from "../models/Auction";
+import { Auction, AuctionDocument } from "../models/Auction";
 import { Request, Response, NextFunction } from "express";
 import { IVerifyOptions } from "passport-local";
 import { WriteError } from "mongodb";
@@ -16,9 +16,9 @@ export const getInstagramMedia = async (req: Request, res: Response, next: NextF
   const user = req.user as UserDocument;
   const token = user.tokens.find((token: AuthToken) => token.kind === "facebook");
   const igAccountId = req.params.id;
-  const account = await loadIGUser({ igAccountId, token: token.accessToken })
-  const medias = await loadAllMedia({ igAccountId, token: token.accessToken });
-  const auctions = [];
+  const account = await loadIGUser({ igAccountId, token: token.longLiveToken })
+  const medias = await loadAllMedia({ igAccountId, token: token.longLiveToken });
+  const auctions: AuctionDocument[] = [];
 
   for(const media of medias) {
     const auction = await Auction.findOne({ mediaId: media.id });
@@ -43,7 +43,7 @@ export const getInstagramMedia = async (req: Request, res: Response, next: NextF
 
 export const createInstagramComment = async (req: Request, res: Response) => {
   const user = req.user as UserDocument;
-  const { accessToken: token } = user.tokens.find((token: AuthToken) => token.kind === "facebook");
+  const { longLiveToken: token } = user.tokens.find((token: AuthToken) => token.kind === "facebook");
   const mediaId = req.params.mediaId;
 
   const result = await createCommentForMedia({ mediaId, token, message: 'Auction will start soon' })

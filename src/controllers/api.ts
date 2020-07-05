@@ -2,8 +2,14 @@
 
 import axios from "axios";
 import { Response, Request, NextFunction } from "express";
-import { AuthToken, UserDocument } from "../models/User";
-import { getBussinessAccount, getFacebookUser, subscribeToPageWebhooks } from "../services/facebook.service";
+import { AuthToken, User, UserDocument } from "../models/User";
+import { 
+    getBussinessAccount,
+    getFacebookUser,
+    getLongTermUserKey,
+    getPageToken,
+    subscribeToPageWebhooks,
+} from "../services/facebook.service";
 import { createCommentForMedia, loadIGUser, loadAllMedia } from "../services/instagram.service";
 
 axios.defaults.baseURL = "https://graph.facebook.com/v7.0";
@@ -27,12 +33,18 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
     const me = await getFacebookUser(token.accessToken);
     const accounts = me.accounts || { data: []};
     const instagramBusinessAccountIds = new Set<string>();
-
+    const longTermToken = await getLongTermUserKey(token.accessToken);
+    
     for(const account of accounts.data) {
-        const { instagramBusinessAccount, pageId } = await getBussinessAccount(account.id, token.accessToken);
+        const { instagramBusinessAccount, pageId } = await getBussinessAccount({ 
+            facebookAccountId: account.id, 
+            token: token.accessToken,
+            userId: user._id,
+        });
+        const pageToken = await getPageToken(pageId, longTermToken);
 
         if(pageId){
-            await subscribeToPageWebhooks(pageId, token.accessToken);
+            await subscribeToPageWebhooks(pageId, pageToken);
         }
 
         if(instagramBusinessAccount && instagramBusinessAccount.id) {
@@ -60,7 +72,7 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
             mediaByProfile[igaccount].push(media);
         }
     }
-
+    
     res.render("api/facebook", {
         title: "Facebook API",
         profile: {...me, IGUsers}

@@ -45,6 +45,7 @@ type comparePasswordFunction = (candidatePassword: string, cb: (err: any, isMatc
 export interface AuthToken {
     accessToken: string;
     kind: string;
+    longLiveToken: string;
 }
 
 const userSchema = new mongoose.Schema({

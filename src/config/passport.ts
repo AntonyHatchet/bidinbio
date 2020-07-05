@@ -2,10 +2,9 @@ import passport from "passport";
 import passportLocal from "passport-local";
 import passportFacebook from "passport-facebook";
 import _ from "lodash";
-
-// import { User, UserType } from '../models/User';
 import { User, UserDocument } from "../models/User";
 import { Request, Response, NextFunction } from "express";
+import { getLongTermUserKey } from "../services/facebook.service";
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
@@ -75,15 +74,18 @@ passport.use(new FacebookStrategy({
             } else {
                 User.findById(req.user.id, (err, user: any) => {
                     if (err) { return done(err); }
-                    user.facebookAccountId = profile.id;
-                    user.tokens.push({ kind: "facebook", accessToken });
-                    user.profile.name = user.profile.name || `${profile.name.givenName} ${profile.name.familyName}`;
-                    user.profile.gender = user.profile.gender || profile._json.gender;
-                    user.profile.picture = user.profile.picture || `https://graph.facebook.com/${profile.id}/picture?type=large`;
-                    user.save((err: Error) => {
-                        req.flash("info", { msg: "Facebook account has been linked." });
-                        done(err, user);
-                    });
+                    getLongTermUserKey(accessToken)
+                        .then(longLiveToken => {
+                            user.facebookAccountId = profile.id;
+                            user.tokens.push({ kind: "facebook", longLiveToken, accessToken });
+                            user.profile.name = user.profile.name || `${profile.name.givenName} ${profile.name.familyName}`;
+                            user.profile.gender = user.profile.gender || profile._json.gender;
+                            user.profile.picture = user.profile.picture || `https://graph.facebook.com/${profile.id}/picture?type=large`;
+                            user.save((err: Error) => {
+                                req.flash("info", { msg: "Facebook account has been linked." });
+                                done(err, user);
+                            });
+                        })
                 });
             }
         });
@@ -99,17 +101,20 @@ passport.use(new FacebookStrategy({
                     req.flash("errors", { msg: "There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings." });
                     done(err);
                 } else {
-                    const user: any = new User();
-                    user.email = profile._json.email;
-                    user.facebookAccountId = profile.id;
-                    user.tokens.push({ kind: "facebook", accessToken });
-                    user.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
-                    user.profile.gender = profile._json.gender;
-                    user.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
-                    user.profile.location = (profile._json.location) ? profile._json.location.name : "";
-                    user.save((err: Error) => {
-                        done(err, user);
-                    });
+                    getLongTermUserKey(accessToken)
+                    .then(longLiveToken => {
+                        const user: any = new User();
+                        user.email = profile._json.email;
+                        user.facebookAccountId = profile.id;
+                        user.tokens.push({ kind: "facebook", longLiveToken, accessToken });
+                        user.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
+                        user.profile.gender = profile._json.gender;
+                        user.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
+                        user.profile.location = (profile._json.location) ? profile._json.location.name : "";
+                        user.save((err: Error) => {
+                            done(err, user);
+                        });
+                    })
                 }
             });
         });

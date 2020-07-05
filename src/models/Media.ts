@@ -21,4 +21,5 @@ export interface Media {
     thumbnail_url: string; // (only available on video IG Media objects)
     timestamp: Date; // ISO 8601 formatted creation date in UTC (default is UTC ±00:00)
     username: string;
+    auctionId: string;
 }

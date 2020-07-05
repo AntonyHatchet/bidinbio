@@ -1,5 +1,6 @@
 import axios from "axios";
 import { User } from '../models/User';
+import { FACEBOOK_ID, FACEBOOK_SECRET } from "../util/secrets";
 
 const FacebookUserAttributes = [
     "id",
@@ -11,7 +12,10 @@ const FacebookUserAttributes = [
     "link",
     "accounts"
 ];
-export const getBussinessAccount = async (facebookAccountId: string, token: string) => {
+export const getBussinessAccount = async ({ facebookAccountId, token, userId }: {facebookAccountId: string, token: string, userId: string}) => {
+    if(!facebookAccountId) {
+        throw Error('facebookAccountId not found')
+    }
     try{
         const { data: { 
             instagram_business_account: instagramBusinessAccount,
@@ -22,10 +26,12 @@ export const getBussinessAccount = async (facebookAccountId: string, token: stri
                 fields: "instagram_business_account"
             }
         });
-        const filter = { tokens: [ { kind:"facebook", accessToken: token }] };
-        const user = await User.findOne(filter);
-    
-        if(user && !user.bussinessAccounts.facebook.includes(instagramBusinessAccount.id)){
+        const user = await User.findOne({ _id: userId });
+
+        console.log({ user, facebookAccountId, instagramBusinessAccount });
+
+        if(user && (!user.bussinessAccounts || !user.bussinessAccounts.facebook.includes(instagramBusinessAccount.id))){
+            user.bussinessAccounts.facebook = user.bussinessAccounts.facebook || [];
             user.bussinessAccounts.facebook.push(instagramBusinessAccount.id);
             await user.save();
         }
@@ -40,12 +46,11 @@ export const getBussinessAccount = async (facebookAccountId: string, token: stri
 
 export const getFacebookUser = async (token: string) => {
     try{
-        console.log(token)
         const { data } = await axios.get("/me", {
             params: {
                 access_token: token,
                 fields: FacebookUserAttributes.join(",")
-            }
+            },
         });
         return data;
     } catch (e) {
@@ -54,15 +59,51 @@ export const getFacebookUser = async (token: string) => {
     }
 };
 
+export const getLongTermUserKey = async (token: string) => {
+    try {
+        const { data: { access_token } } = await axios.get("/oauth/access_token", {
+            params: {
+                grant_type: 'fb_exchange_token',
+                client_id: FACEBOOK_ID,
+                client_secret: FACEBOOK_SECRET,
+                fb_exchange_token: token,
+            }
+        });
+        return access_token;
+    } catch (e) {
+        console.log('getLongTermUserKey')
+        console.log(e.response && e.response.headers['www-authenticate'] || e.message)
+        return {}
+    }
+}
+
+export const getPageToken = async (pageId: string, token: string) => {
+    try {
+        const { data: { access_token } } = await axios.get(`${pageId}`, {
+            params: {
+                fields: 'access_token',
+            },
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+        return access_token;
+    } catch (e) {
+        console.log('getPageToken')
+        console.log(e.response && e.response.headers['www-authenticate'] || e.message)
+        return {}
+    }
+}
 export const subscribeToPageWebhooks = async (pageId: string, token: string) => {
     try {
-        console.log({ pageId, token })
         await axios({
             method: 'post',
             url: `/${pageId}/subscribed_apps`,
             params: {
                 subscribed_fields: 'mention',
-                access_token: token,
+            },
+            headers: {
+                Authorization: 'Bearer ' + token
             }
         });
     } catch(e) {

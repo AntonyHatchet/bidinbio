@@ -1,6 +1,7 @@
 import crypto, { Utf8AsciiLatin1Encoding } from "crypto";
 import { Request, Response, NextFunction } from "express";
 import { handleCommentsHook, handleMentionsHook, handleStoryInsightsHook } from '../services/hooks.service';
+import { createCommentForMedia } from "../services/instagram.service";
 
 enum HookType {
     comments= 'comments',

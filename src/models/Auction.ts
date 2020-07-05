@@ -1,20 +1,28 @@
 import mongoose from "mongoose";
 import { Media } from './Media';
 import { any } from "bluebird";
+
+export enum AuctionStatus {
+    ongoing = 'ongoing',
+    finished = 'finished',
+}
 export type AuctionDocument = mongoose.Document & {
     media: Media;
+    mediaId: string;
     userId: string;
     price: string;
+    bin: number;
     step: string;
     start: Date;
     end: Date;
     prolongation: string;
     bids: Bid[];
     winner: Bid;
+    status: AuctionStatus;
 };
 export interface Bid {
     ammount: Number,
-    userId: String,
+    userName: String,
     sended: Date,
 }
 
@@ -22,6 +30,7 @@ const auctionSchema = new mongoose.Schema({
     userId: String,
     mediaId: String,
     price: String,
+    bin: Number,
     step: String,
     start: Date,
     end: Date,
@@ -43,7 +52,8 @@ const auctionSchema = new mongoose.Schema({
         ammount: Number,
         userId: String,
         sended: Date,
-    }
+    },
+    status: String,
 }, { timestamps: true });
 
 export const Auction = mongoose.model<AuctionDocument>("Auction", auctionSchema);

@@ -14,6 +14,8 @@ const prod = ENVIRONMENT === "production"; // Anything else is treated as 'dev'
 
 export const SESSION_SECRET = process.env["SESSION_SECRET"];
 export const MONGODB_URI = prod ? process.env["MONGODB_URI"] : process.env["MONGODB_URI_LOCAL"];
+export const FACEBOOK_ID = prod ? process.env["FACEBOOK_ID"] : process.env["FACEBOOK_ID_LOCAL"];
+export const FACEBOOK_SECRET = prod ? process.env["FACEBOOK_SECRET"] : process.env["FACEBOOK_SECRET_LOCAL"];
 
 if (!SESSION_SECRET) {
     logger.error("No client secret. Set SESSION_SECRET environment variable.");
