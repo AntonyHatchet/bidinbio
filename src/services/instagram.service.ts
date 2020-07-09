@@ -184,3 +184,7 @@ export const loadMentionedMedia = async ({ userId, media_id, token }) => {
         return e.message;
     }
 }
+
+export const getUserByMediaId = async (mediaId) => {
+    
+}

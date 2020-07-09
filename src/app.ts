@@ -11,6 +11,9 @@ import passport from "passport";
 import bluebird from "bluebird";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 
+import { closeAllEndedAuctions } from './services/auction.service';
+import cron from 'node-cron'
+
 const MongoStore = mongo(session);
 
 // Controllers (route handlers)
@@ -135,4 +138,11 @@ app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "
 app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
     res.redirect(req.session.returnTo || "/");
 });
+
+cron.schedule('* * * * *', () => {
+    console.log('running every minute to 1');
+    console.log(new Date());
+    closeAllEndedAuctions()
+});
+
 export default app;

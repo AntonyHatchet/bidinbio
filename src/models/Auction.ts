@@ -3,7 +3,7 @@ import { Media } from './Media';
 import { any } from "bluebird";
 
 export enum AuctionStatus {
-    ongoing = 'ongoing',
+    active = 'active',
     finished = 'finished',
 }
 export type AuctionDocument = mongoose.Document & {
@@ -24,6 +24,7 @@ export interface Bid {
     ammount: Number,
     userName: String,
     sended: Date,
+    commentId: string,
 }
 
 const auctionSchema = new mongoose.Schema({

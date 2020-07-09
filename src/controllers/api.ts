@@ -3,7 +3,7 @@
 import axios from "axios";
 import { Response, Request, NextFunction } from "express";
 import { AuthToken, User, UserDocument } from "../models/User";
-import { 
+import {
     getBussinessAccount,
     getFacebookUser,
     getLongTermUserKey,

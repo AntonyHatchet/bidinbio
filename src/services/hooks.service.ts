@@ -15,7 +15,7 @@ import {
   bidInBioId,
 } from '../util/fixture';
 import getToken from '../util/getToken';
-
+const twenyFourHours = 86400000;
 interface Hook {
   entry: [
     {
@@ -77,9 +77,7 @@ export const handleCommentsHook = async (data: Hook) => {
   const { longLiveToken, accessToken } = getToken(user, 'facebook');
 
   const extendedComment = await loadComment(incomeMessageId, longLiveToken);
-  console.log({ mediaId: extendedComment.media.id, status: AuctionStatus.ongoing })
-  const auction = await Auction.findOne({ mediaId: extendedComment.media.id, status: AuctionStatus.ongoing });
-  console.log({auction})
+  const auction = await Auction.findOne({ mediaId: extendedComment.media.id, status: AuctionStatus.active });
   if(!auction) {
     return console.log(`Auction for media ${extendedComment.media.id} is not started yet`)
   }
@@ -90,7 +88,7 @@ export const handleCommentsHook = async (data: Hook) => {
     return console.log(`Comment ${incomeMessageId} is not a bid, ignore it`)
   }
 
-  if (+auction.step >= +bid || +bid < +auction.step) {
+  if (+auction.price >= +bid || +bid < +auction.step) {
     console.log(`Bid from ${incomeMessageId} is to low`)
     return await replyForComment({ 
       commentId: incomeMessageId,
@@ -104,7 +102,8 @@ export const handleCommentsHook = async (data: Hook) => {
     const winner = {
       ammount: bid,
       userName: extendedComment.username,
-      sended: time
+      sended: time,
+      commentId: extendedComment.id,
     };
     auction.bids.push(winner)
     auction.price = bid;
@@ -126,10 +125,12 @@ export const handleCommentsHook = async (data: Hook) => {
     })
   }
 
+  const previousBid = auction.bids.length ? auction.bids[auction.bids.length -1] : null;
   auction.bids.push({
     ammount: +bid,
     userName: extendedComment.username,
-    sended: time
+    sended: time,
+    commentId: extendedComment.id
   })
   auction.price = +bid;
 
@@ -139,6 +140,13 @@ export const handleCommentsHook = async (data: Hook) => {
     token: longLiveToken,
     message: `Got it, @${extendedComment.username}! next bid: $${+auction.step + +bid}!`,
   });
+  if (previousBid) {
+    await replyForComment({
+      commentId: previousBid.commentId,
+      token: longLiveToken,
+      message: `@${previousBid.username}: outbid! New bid: $${+auction.step + +bid}!`,
+    });
+  }
 
   extendedComment.replyed = true;
   await Comment.create(extendedComment);
@@ -179,17 +187,19 @@ export const handleMentionsHook = async (data: MentionsHook) => {
     price: auctionAtributes.startPrice,
     bin: auctionAtributes.bin,
     step: auctionAtributes.step,
-    status: AuctionStatus.ongoing,
+    status: AuctionStatus.active,
+    start: new Date(),
+    end: new Date( Date.now() + twenyFourHours )
   })
 
   await replyForMention({
     userId: hookUserId,
     media_id: extendedMedia.id,
     token: longLiveToken,
-    message: `Hey! Auction started: 
-    base price: ${auctionAtributes.startPrice}
-    bin: ${auctionAtributes.bin? auctionAtributes.bin: 'No bin for that lot!'}
-    step: ${auctionAtributes.step}`,
+    message: `Hey! Biding started: 
+    Bid starting at: ${auctionAtributes.startPrice}
+    Minimal raise: ${auctionAtributes.step}
+    ${auctionAtributes.bin? `Buy it now: ${auctionAtributes.bin}`: ''}`,
   });
 }
 
