@@ -1,14 +1,14 @@
 "use strict";
 
 import axios from "axios";
-import moment from 'moment';
+import moment from "moment";
 import { Response, Request, NextFunction } from "express";
 import { AuthToken, UserDocument } from "../models/User";
 import { Auction, AuctionStatus } from "../models/Auction";
 import { winnerBackedOut } from "../services/auction.service";
 import { getBussinessAccount, getFacebookUser } from "../services/facebook.service";
 import { createCommentForMedia, loadIGUser, loadAllMedia, loadMediaById } from "../services/instagram.service";
-import getToken from '../util/getToken';
+import getToken from "../util/getToken";
 
 axios.defaults.baseURL = "https://graph.facebook.com/v7.0";
 
@@ -22,7 +22,7 @@ export const getAuction = async (req: Request, res: Response) => {
     title: "Automation",
     auction
   });
-}
+};
 
 export const getNewAuction = async (req: Request, res: Response) => {
   const user = req.user as UserDocument;
@@ -34,7 +34,7 @@ export const getNewAuction = async (req: Request, res: Response) => {
     title: "New Auction",
     media
   });
-}
+};
 
 export const createNewAuction = async (req: Request, res: Response) => {
   const user = req.user as UserDocument;
@@ -58,11 +58,11 @@ export const createNewAuction = async (req: Request, res: Response) => {
     start: new Date(start),
     end: new Date(end),
     prolongation,
-  })
+  });
   await Auction.updateOne({ mediaId }, auction, { upsert: true });
   await createCommentForMedia({ mediaId, token, message });
   res.redirect(`../${mediaId}`);
-}
+};
 
 export const deleteAuction = async (req: Request, res: Response) => {
   const user = req.user as UserDocument;
@@ -71,7 +71,7 @@ export const deleteAuction = async (req: Request, res: Response) => {
   await Auction.update({ mediaId }, { status: AuctionStatus.canceled });
 
   return res.redirect("../../../");
-}
+};
 
 export async function markWinnerAsBackedOut(req: Request, res: Response) {
   const mediaId = req.params.mediaId;
@@ -86,8 +86,8 @@ export async function markWinnerAsBackedOut(req: Request, res: Response) {
 interface StartAuction {
   price: number;
   step: number;
-  start:Date;
-  end:Date;
+  start: Date;
+  end: Date;
   prolongation: number;
 }
 
@@ -99,8 +99,8 @@ function createAuctionStartMessage({
   prolongation,
 }: StartAuction) {
   return `
-    Auction will start on ${moment(start).format('LLLL')}! 
+    Auction will start on ${moment(start).format("LLLL")}! 
     Start price: ${price}$ and step is ${step}$ 
-    Auction will end on ${moment(end).format('LLLL')}!
-  `
+    Auction will end on ${moment(end).format("LLLL")}!
+  `;
 }

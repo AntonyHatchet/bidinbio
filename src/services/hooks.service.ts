@@ -6,15 +6,16 @@ import {
   replyForComment,
   loadMentionedMedia 
 } from "./instagram.service";
-import { User, Comment, Auction, AuctionStatus } from '../models';
+import { User, Comment, Auction, AuctionStatus } from "../models";
 import { 
   media, 
   auctionMessages,
   mentions,
   fakeClientId,
   bidInBioId,
-} from '../util/fixture';
-import getToken from '../util/getToken';
+} from "../util/fixture";
+import getToken from "../util/getToken";
+import { Bid } from "../models/Auction";
 const twenyFourHours = 86400000;
 interface Hook {
   entry: [
@@ -22,7 +23,7 @@ interface Hook {
       changes: [
         {
           field: string;
-          value: CommentHook | MentionsHook;
+          value: MentionHook;
         }
       ];
       time: number;
@@ -31,14 +32,11 @@ interface Hook {
   ];
   object: string;
 }
-interface CommentHook {
-  id: string;
-  text: string;
-}
-
-interface MentionsHook {
-  media_id: string;
-  comment_id: string;
+interface MentionHook {
+  id?: string;
+  text?: string;
+  media_id?: string;
+  comment_id?: string;
 }
 
 
@@ -52,14 +50,14 @@ interface StoryInsightsHook {
   replies: number;
 }
 export const handleCommentsHook = async (data: Hook) => {
-  let { time, id: hookUserId } = data.entry[0];
+  let { time, id: hookUserId } = data.entry[0]; // eslint-disable-line
   let incomeMessageId = data.entry[0].changes[0].value.id;
 
-  if (hookUserId === '0'){
+  if (hookUserId === "0"){
     const randNumber = Math.floor(Math.random() * (auctionMessages.length - 1));
 
     hookUserId = fakeClientId;
-    incomeMessageId = '17855557361098584';
+    incomeMessageId = "17855557361098584";
 
     console.log({randNumber, incomeMessageId});
   }
@@ -69,35 +67,35 @@ export const handleCommentsHook = async (data: Hook) => {
     return console.log(`Comment ${incomeMessageId} already exist, do nothing`);
   }
   
-  const user = await User.findOne({ 'bussinessAccounts.facebook': hookUserId });
+  const user = await User.findOne({ "bussinessAccounts.facebook": hookUserId });
   if (!user) {
-    return console.log(`User for key ${hookUserId} not found`)
+    return console.log(`User for key ${hookUserId} not found`);
   }
 
-  const { longLiveToken, accessToken } = getToken(user, 'facebook');
+  const { longLiveToken, accessToken } = getToken(user, "facebook");
 
   const extendedComment = await loadComment(incomeMessageId, longLiveToken);
 
   if(!extendedComment) {
-    return console.log('cannot load comment')
+    return console.log("cannot load comment");
   }
 
   extendedComment.commentid = incomeMessageId;
-  await Comment.create(extendedComment)
+  await Comment.create(extendedComment);
 
   const auction = await Auction.findOne({ mediaId: extendedComment.media.id, status: AuctionStatus.active });
   if(!auction) {
-    return console.log(`Auction for media ${extendedComment.media.id} is not started yet`)
+    return console.log(`Auction for media ${extendedComment.media.id} is not started yet`);
   }
 
   const bid = getBidFromComment(extendedComment.text);
 
   if(!bid) {
-    return console.log(`Comment ${incomeMessageId} is not a bid, ignore it`)
+    return console.log(`Comment ${incomeMessageId} is not a bid, ignore it`);
   }
 
   if (+auction.price >= +bid || +bid < +auction.step) {
-    console.log(`Bid from ${incomeMessageId} is to low: ${bid}`)
+    console.log(`Bid from ${incomeMessageId} is to low: ${bid}`);
     extendedComment.replyed = true;
     await Comment.create(extendedComment);
     return await replyForComment({ 
@@ -108,15 +106,15 @@ export const handleCommentsHook = async (data: Hook) => {
   }
 
   if(auction.bin && +auction.bin <= +bid) {
-    console.log(`Bid from ${incomeMessageId} is equal or more than BIN, auction over`)
-    const winner = {
+    console.log(`Bid from ${incomeMessageId} is equal or more than BIN, auction over`);
+    const winner: Bid = {
       ammount: bid,
       username: extendedComment.username,
       sended: time,
       commentId: extendedComment.id,
       renegade: false,
     };
-    auction.bids.push(winner)
+    auction.bids.push(winner);
     auction.price = bid;
     auction.status = AuctionStatus.finished;
     auction.winner = winner;
@@ -135,7 +133,7 @@ export const handleCommentsHook = async (data: Hook) => {
       mediaId: auction.mediaId,
       token: longLiveToken,
       message: `🏁The bidding is over. Sold for $${bid}!`
-    })
+    });
   }
 
   const previousBid = auction.bids.length ? auction.bids[auction.bids.length -1] : null;
@@ -145,8 +143,8 @@ export const handleCommentsHook = async (data: Hook) => {
     sended: time,
     commentId: extendedComment.id,
     renegade: false,
-  })
-  auction.price = +bid;
+  });
+  auction.price = bid;
 
   await auction.save();
   if (previousBid) {
@@ -159,35 +157,35 @@ export const handleCommentsHook = async (data: Hook) => {
 
   extendedComment.replyed = true;
   await Comment.create(extendedComment);
-}
-export const handleMentionsHook = async (data: MentionsHook) => {
-  let { time, id: hookUserId } = data.entry[0];
+};
+export const handleMentionsHook = async (data: Hook) => {
+  let { time, id: hookUserId } = data.entry[0]; // eslint-disable-line
   let { media_id } = data.entry[0].changes[0].value;
   
-  if (hookUserId === '0') {
+  if (hookUserId === "0") {
     hookUserId = bidInBioId;
     media_id = mentions.caption.value.media_id;
   }
 
-  const user = await User.findOne({ 'bussinessAccounts.facebook': hookUserId });
+  const user = await User.findOne({ "bussinessAccounts.facebook": hookUserId });
   if (!user) {
-    return console.log(`User for key ${hookUserId} not found`)
+    return console.log(`User for key ${hookUserId} not found`);
   }
 
-  const { longLiveToken } = getToken(user, 'facebook');
+  const { longLiveToken } = getToken(user, "facebook");
   const extendedMedia = await loadMediaById({ mediaId: media_id, token: longLiveToken });
   if (!extendedMedia) {
-    return console.log('Cannot load media');
+    return console.log("Cannot load media");
   }
 
   const auctionAtributes = getAuctionAttributes(extendedMedia.caption);
   if(!auctionAtributes) {
-    return console.log(`No auction attributes found in message`);
+    return console.log("No auction attributes found in message");
   }
 
   const existedAuction = await Auction.findOne({ mediaId: extendedMedia.id });
   if (existedAuction) {
-    return console.log(`Auction for media ${extendedMedia.id} already exist!`)
+    return console.log(`Auction for media ${extendedMedia.id} already exist!`);
   }
 
   const newAuction = await Auction.create({
@@ -204,7 +202,7 @@ export const handleMentionsHook = async (data: MentionsHook) => {
       media_url: extendedMedia.media_url,
       caption: extendedMedia.caption
     },
-  })
+  });
 
   await replyForMention({
     userId: hookUserId,
@@ -215,11 +213,11 @@ export const handleMentionsHook = async (data: MentionsHook) => {
     Buy it now: $${auctionAtributes.bin}
     Minimal raise: $${auctionAtributes.step}`,
   });
-}
+};
 
 export const handleStoryInsightsHook = async (data: StoryInsightsHook) => {
-  console.log({data})
-}
+  console.log({data});
+};
 
 // private 
 
@@ -228,10 +226,10 @@ function getBidFromComment(comment: string) {
 }
 
 function getAuctionAttributes(comment: string) {
-  const result = /( ([0-9]+)(?=[^\/]*)\/([0-9]+)(?=[^\/]*)\/([0-9]+)(?=[^\/]*)| ([0-9]+)(?=[^\/]*)\/([0-9]+)(?=[^\/]*))/.test(comment)
+  const result = /( ([0-9]+)(?=[^\/]*)\/([0-9]+)(?=[^\/]*)\/([0-9]+)(?=[^\/]*)| ([0-9]+)(?=[^\/]*)\/([0-9]+)(?=[^\/]*))/.test(comment);
 
   if(result) {
-    const [startPrice, bin, step= 1] = comment.split(' ')[1].split('/');
+    const [startPrice, bin, step= 1] = comment.split(" ")[1].split("/");
     return { startPrice, bin, step };
   }
   return false;

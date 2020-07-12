@@ -11,8 +11,8 @@ import passport from "passport";
 import bluebird from "bluebird";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 
-import { closeAllEndedAuctions } from './services/auction.service';
-import cron from 'node-cron'
+import { closeAllEndedAuctions } from "./services/auction.service";
+import cron from "node-cron";
 
 const MongoStore = mongo(session);
 
@@ -128,10 +128,10 @@ const facebookPermision = [
     // 'instagram_manage_insights',
     // 'pages_manage_metadata',
     // 'pages_read_engagement'
-    'instagram_basic',
-    'instagram_manage_comments',
-    'pages_show_list',
-]
+    "instagram_basic",
+    "instagram_manage_comments",
+    "pages_show_list",
+];
 
 /**
  * OAuth authentication routes. (Sign in)
@@ -141,10 +141,10 @@ app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRe
     res.redirect(req.session.returnTo || "/");
 });
 
-cron.schedule('* * * * *', () => {
-    console.log('running every minute to 1');
+cron.schedule("* * * * *", () => {
+    console.log("running every minute to 1");
     console.log(new Date());
-    closeAllEndedAuctions()
+    closeAllEndedAuctions();
 });
 
 export default app;

@@ -18,6 +18,7 @@
     ],
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/interface-name-prefix": 0,
-    "@typescript-eslint/camelcase": 1
+    "@typescript-eslint/camelcase": 1,
+    "@typescript-eslint/no-use-before-define": 0
   }
 }

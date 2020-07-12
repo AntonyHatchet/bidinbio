@@ -54,8 +54,8 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
 
     const IGUsers = [];
     for(const igAccountId of instagramBusinessAccountIds) {
-        const account = await loadIGUser({igAccountId, token: token.accessToken})
-        IGUsers.push(account)
+        const account = await loadIGUser({igAccountId, token: token.accessToken});
+        IGUsers.push(account);
     }
 
     interface MediaType {

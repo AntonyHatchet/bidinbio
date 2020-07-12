@@ -34,7 +34,7 @@ export type UserDocument = mongoose.Document & {
 
     bussinessAccounts: {
         facebook: string[];
-    }
+    };
 
     comparePassword: comparePasswordFunction;
     gravatar: (size: number) => string;

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 export type RenegadeDocument = mongoose.Document & {
-  username: String,
-  auctions: Array,
+  username: string;
+  auctions: Array<number>;
 };
 
 const renegadeSchema = new mongoose.Schema({

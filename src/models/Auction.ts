@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import { Media } from './Media';
+import { Media } from "./Media";
 import { any } from "bluebird";
 
 export enum AuctionStatus {
-    active = 'active',
-    finished = 'finished',
-    canceled = 'canceled',
+    active = "active",
+    finished = "finished",
+    canceled = "canceled",
 }
 export type AuctionDocument = mongoose.Document & {
     media: Media;
@@ -23,10 +23,11 @@ export type AuctionDocument = mongoose.Document & {
     status: AuctionStatus;
 };
 export interface Bid {
-    ammount: Number,
-    username: String,
-    sended: Date,
-    commentId: string,
+    ammount: number | string;
+    username: string;
+    sended: Date | string | number;
+    commentId: string;
+    renegade: boolean;
 }
 
 const auctionSchema = new mongoose.Schema({

@@ -85,7 +85,7 @@ passport.use(new FacebookStrategy({
                                 req.flash("info", { msg: "Facebook account has been linked." });
                                 done(err, user);
                             });
-                        })
+                        });
                 });
             }
         });
@@ -114,7 +114,7 @@ passport.use(new FacebookStrategy({
                         user.save((err: Error) => {
                             done(err, user);
                         });
-                    })
+                    });
                 }
             });
         });

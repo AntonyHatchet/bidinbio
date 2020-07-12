@@ -16,7 +16,7 @@ export const getInstagramMedia = async (req: Request, res: Response, next: NextF
   const user = req.user as UserDocument;
   const token = user.tokens.find((token: AuthToken) => token.kind === "facebook");
   const igAccountId = req.params.id;
-  const account = await loadIGUser({ igAccountId, token: token.longLiveToken })
+  const account = await loadIGUser({ igAccountId, token: token.longLiveToken });
   const medias = await loadAllMedia({ igAccountId, token: token.longLiveToken });
   const auctions: AuctionDocument[] = [];
 
@@ -32,7 +32,7 @@ export const getInstagramMedia = async (req: Request, res: Response, next: NextF
       medias: medias.map(media => {
         for(const auction of auctions) {
           if(media.id === auction.mediaId){
-            media.auctionId = auction._id
+            media.auctionId = auction._id;
           }
         }
         return media;
@@ -46,6 +46,6 @@ export const createInstagramComment = async (req: Request, res: Response) => {
   const { longLiveToken: token } = user.tokens.find((token: AuthToken) => token.kind === "facebook");
   const mediaId = req.params.mediaId;
 
-  const result = await createCommentForMedia({ mediaId, token, message: 'Auction will start soon' })
+  const result = await createCommentForMedia({ mediaId, token, message: "Auction will start soon" });
   res.send(result);
 };

@@ -18,7 +18,7 @@ const CommentAttributes = [
 export const getMediaIds = async ({ igAccountId, token }: RequestParams) => {
     const { data: { data: mediaIds } } = await axios.get(`/${igAccountId}/media`, {
         headers: {
-            Authorization: 'Bearer ' + token
+            Authorization: "Bearer " + token
         }
     });
     return mediaIds;
@@ -39,7 +39,7 @@ export const loadAllMedia = async ({ igAccountId, token }: RequestParams) => {
 
 };
 
-export const loadMediaById = async ({ mediaId, token }: { mediaId: string; token: string; }) => {
+export const loadMediaById = async ({ mediaId, token }: { mediaId: string; token: string }) => {
     try {
         console.log({ token });
         const { data } = await axios.get(`/${mediaId}`, {
@@ -47,13 +47,13 @@ export const loadMediaById = async ({ mediaId, token }: { mediaId: string; token
                 fields: MediaAttributes.join(","),
             },
             headers: {
-                Authorization: 'Bearer ' + token
+                Authorization: "Bearer " + token
             }
         });
-        console.log(data)
+        console.log(data);
         return data;
     } catch (e) {
-        console.log('loadMediaById');
+        console.log("loadMediaById");
         console.log(e);
     }
 };
@@ -65,16 +65,16 @@ export const loadComment = async (commentId: string, token: string) => {
                 fields: CommentAttributes.join(","),
             },
             headers: {
-                Authorization: 'Bearer ' + token
+                Authorization: "Bearer " + token
             }
         });
-        console.log(data)
+        console.log(data);
         return data;
     } catch (e) {
-        console.log('loadComment');
+        console.log("loadComment");
         console.log(e);
     }
-}
+};
 
 export const loadIGUser = async ({ igAccountId, token }: RequestParams) => {
     try {
@@ -83,7 +83,7 @@ export const loadIGUser = async ({ igAccountId, token }: RequestParams) => {
                 fields: IGUserAttributes.join(","),
             },
             headers: {
-                Authorization: 'Bearer ' + token
+                Authorization: "Bearer " + token
             }
         });
         return data;
@@ -94,39 +94,41 @@ export const loadIGUser = async ({ igAccountId, token }: RequestParams) => {
 
 interface CommentForMedia {
     mediaId: string;
-    token:string;
-    message:string;
+    token: string;
+    message: string;
 }
 export const createCommentForMedia = async ({ mediaId, token, message }: CommentForMedia) => {
     try {
-        console.log({ mediaId, token, message })
+        console.log({ mediaId, token, message });
         const { data } = await axios({
-            method: 'post',
+            method: "post",
             url: `/${mediaId}/comments`,
             params: {
                 message,
                 // access_token: token,
             },
             headers: {
-                Authorization: 'Bearer ' + token
+                Authorization: "Bearer " + token
             }
         });
         return data;
     } catch(e) {
-        console.log(e.message)
+        console.log(e.message);
         return e.message;
     }
-}
+};
 
 interface ResponseForMention {
-    mediaId: string;
-    token:string;
-    message:string;
+    media_id?: string;
+    token: string;
+    message: string;
+    userId: string;
+    commentId?: string;
 }
 export const replyForMention = async ({ userId, commentId, media_id, token, message }: ResponseForMention) => {
     try {
         const { data } = await axios({
-            method: 'post',
+            method: "post",
             url: `/${userId}/mentions`,
             params: {
                 media_id,
@@ -134,58 +136,70 @@ export const replyForMention = async ({ userId, commentId, media_id, token, mess
                 message,
             },
             headers: {
-                Authorization: 'Bearer ' + token
+                Authorization: "Bearer " + token
             }
         });
         return data;
     } catch(e) {
-        console.log('replyForMention')
-        console.log(e)
+        console.log("replyForMention");
+        console.log(e);
         return e.message;
     }
+};
+
+interface ReplyComment {
+    commentId: string;
+    token: string;
+    message: string;
 }
 
-export const replyForComment = async ({commentId, token, message}) => {
+interface ReplyForComment {
+    commentId: string;
+    token: string;
+    message: string;
+}
+export const replyForComment = async ({commentId, token, message}: ReplyForComment) => {
     try {
         const { data } = await axios({
-            method: 'post',
+            method: "post",
             url: `/${commentId}/replies`,
             params: {
                 message,
                 access_token: token,
             },
             headers: {
-                Authorization: 'Bearer ' + token
+                Authorization: "Bearer " + token
             }
         });
         return data;
     } catch(e) {
-        console.log('replyForComment')
-        console.log(e)
+        console.log("replyForComment");
+        console.log(e);
         return e.message;
     } 
-}
+};
 
-export const loadMentionedMedia = async ({ userId, media_id, token }) => {
+interface MentionedMedia {
+    userId: string;
+    media_id: string;
+    token: string;
+}
+export const loadMentionedMedia = async ({ userId, media_id, token }: MentionedMedia) => {
         try {
         const { data } = await axios({
-            method: 'get',
+            method: "get",
             url: `/${userId}`,
             params: {
                 fields: `mentioned_media.media_id(${media_id}){caption,media_type}`,
             },
             headers: {
-                Authorization: 'Bearer ' + token
+                Authorization: "Bearer " + token
             }
         });
         return data;
     } catch(e) {
-        console.log('replyForMention')
-        console.log(e)
+        console.log("replyForMention");
+        console.log(e);
         return e.message;
     }
-}
-
-export const getUserByMediaId = async (mediaId) => {
-    
-}
+};

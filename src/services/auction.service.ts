@@ -1,24 +1,24 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import {
   createCommentForMedia,
   replyForComment, 
 } from "./instagram.service";
-import { Auction, AuctionStatus, Renegade, User } from '../models';
-import getToken from '../util/getToken';
+import { Auction, AuctionStatus, Renegade, User } from "../models";
+import getToken from "../util/getToken";
 
 export enum AuctionAnswers {
-  bidAccepted = 'Congrats your bid was accepted!',
-  bidLowerThanCurrent = 'Bid is lower or the same as current',
-  bidLowerThanMinimalRaise = 'Minimal raise is 1$',
+  bidAccepted = "Congrats your bid was accepted!",
+  bidLowerThanCurrent = "Bid is lower or the same as current",
+  bidLowerThanMinimalRaise = "Minimal raise is 1$",
 }
 
 export async function closeAllEndedAuctions() {
-  const auctions = await Auction.find({ end: { $lte: new Date() }, status: 'active'});
-  for (let auction of auctions) {
+  const auctions = await Auction.find({ end: { $lte: new Date() }, status: "active"});
+  for (const auction of auctions) {
     const { mediaId, bids, userId, bin } = auction;
     const winner = bids[bids.length - 1];
-    const user = await User.findOne({ 'bussinessAccounts.facebook': userId });
-    const { longLiveToken } = getToken(user, 'facebook');
+    const user = await User.findOne({ "bussinessAccounts.facebook": userId });
+    const { longLiveToken } = getToken(user, "facebook");
 
     auction.status = AuctionStatus.finished;
     auction.winner = winner;
@@ -28,13 +28,21 @@ export async function closeAllEndedAuctions() {
       token: longLiveToken,
       username: winner.username, 
       mediaId, 
-      ammount: +winner.ammount, 
+      ammount: winner.ammount, 
       bin,
-    })
+    });
   }
 }
 
-export async function sendAuctionEndMessages({ commentId, token, username, mediaId, ammount, bin }) {
+interface AuctionEndMessages { 
+  commentId: string;
+  token: string;
+  username: string;
+  mediaId: string;
+  ammount: string | number;
+  bin: string | number;
+}
+export async function sendAuctionEndMessages({ commentId, token, username, mediaId, ammount, bin }: AuctionEndMessages) {
   await replyForComment({
     commentId,
     token,
@@ -43,8 +51,8 @@ export async function sendAuctionEndMessages({ commentId, token, username, media
   await createCommentForMedia({
     mediaId,
     token, 
-    message: `🏁The bidding is over. Sold ${+bin > +ammount? `for $${ammount}`: '@ BIN'}`
-  })
+    message: `🏁The bidding is over. Sold ${+bin > +ammount? `for $${ammount}`: "@ BIN"}`
+  });
 }
 
 export async function winnerBackedOut(mediaId: string) {

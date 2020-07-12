@@ -1,12 +1,12 @@
 import crypto, { Utf8AsciiLatin1Encoding } from "crypto";
 import { Request, Response, NextFunction } from "express";
-import { handleCommentsHook, handleMentionsHook, handleStoryInsightsHook } from '../services/hooks.service';
+import { handleCommentsHook, handleMentionsHook, handleStoryInsightsHook } from "../services/hooks.service";
 import { createCommentForMedia } from "../services/instagram.service";
 
 enum HookType {
-    comments= 'comments',
-    mentions= 'mentions',
-    story_insights= 'story_insights',
+    comments= "comments",
+    mentions= "mentions",
+    story_insights= "story_insights",
 }
 
 export const authorizeHook = (req: Request & {rawBody: any}, res: Response, next: NextFunction) => {
@@ -27,15 +27,15 @@ export const authorizeHook = (req: Request & {rawBody: any}, res: Response, next
 export const hookRouter = (req: Request, res: Response) => {
     switch(req.body.entry[0].changes[0].field) {
         case HookType.comments:
-            handleCommentsHook(req.body)
+            handleCommentsHook(req.body);
             break;
         case HookType.mentions:
-            handleMentionsHook(req.body)
+            handleMentionsHook(req.body);
             break;
         case HookType.story_insights:
-            handleStoryInsightsHook(req.body.entry[0].changes[0].value)
+            handleStoryInsightsHook(req.body.entry[0].changes[0].value);
             break;
         default:
-            console.log('Unhandled hook type');
+            console.log("Unhandled hook type");
     }
-}
+};
