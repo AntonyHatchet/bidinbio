@@ -1,8 +1,11 @@
 .auction {
+  padding: 20px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
 
-  .left-block {
+  .img-block {
     width: 40%;
 
     img {

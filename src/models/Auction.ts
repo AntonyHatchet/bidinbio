@@ -5,11 +5,13 @@ import { any } from "bluebird";
 export enum AuctionStatus {
     active = 'active',
     finished = 'finished',
+    canceled = 'canceled',
 }
 export type AuctionDocument = mongoose.Document & {
     media: Media;
     mediaId: string;
     userId: string;
+    startingPrice: string;
     price: string;
     bin: number;
     step: string;
@@ -22,7 +24,7 @@ export type AuctionDocument = mongoose.Document & {
 };
 export interface Bid {
     ammount: Number,
-    userName: String,
+    username: String,
     sended: Date,
     commentId: string,
 }
@@ -31,6 +33,7 @@ const auctionSchema = new mongoose.Schema({
     userId: String,
     mediaId: String,
     price: String,
+    startingPrice: String,
     bin: Number,
     step: String,
     start: Date,
@@ -51,8 +54,9 @@ const auctionSchema = new mongoose.Schema({
     bids: Array,
     winner: {
         ammount: Number,
-        userId: String,
+        username: String,
         sended: Date,
+        commentId: String
     },
     status: String,
 }, { timestamps: true });

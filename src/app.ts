@@ -107,6 +107,8 @@ app.delete("/auction/:mediaId", passportConfig.isAuthenticated, auctionControlle
 app.get("/auction/new/:mediaId", passportConfig.isAuthenticated, auctionController.getNewAuction);
 app.post("/auction/new/:mediaId", passportConfig.isAuthenticated, auctionController.createNewAuction);
 
+app.post("/auction/backed/:mediaId", passportConfig.isAuthenticated, auctionController.markWinnerAsBackedOut);
+
 app.get("/instagram/:id", passportConfig.isAuthenticated, instagramController.getInstagramMedia);
 app.post("/instagram/:mediaId", passportConfig.isAuthenticated, instagramController.createInstagramComment);
 
@@ -121,14 +123,14 @@ app.get("/api/v1/hooks/instagram", hooksController.authorizeHook, (req, res) => 
 });
 
 const facebookPermision = [
-    'user_photos',
-    'read_insights',
+    // 'user_photos',
+    // 'read_insights',
+    // 'instagram_manage_insights',
+    // 'pages_manage_metadata',
+    // 'pages_read_engagement'
     'instagram_basic',
     'instagram_manage_comments',
-    'instagram_manage_insights',
     'pages_show_list',
-    'pages_manage_metadata',
-    'pages_read_engagement'
 ]
 
 /**

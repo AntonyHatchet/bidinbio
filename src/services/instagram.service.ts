@@ -41,6 +41,7 @@ export const loadAllMedia = async ({ igAccountId, token }: RequestParams) => {
 
 export const loadMediaById = async ({ mediaId, token }: { mediaId: string; token: string; }) => {
     try {
+        console.log({ token });
         const { data } = await axios.get(`/${mediaId}`, {
             params: {
                 fields: MediaAttributes.join(","),

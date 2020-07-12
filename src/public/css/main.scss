@@ -18,8 +18,8 @@ html {
 }
 
 body {
-  padding-top: 80px;
-  margin-bottom: 75px;
+  height: 100vh;
+  width: 100%;
 }
 
 footer {
@@ -70,4 +70,38 @@ textarea {
 
 .fa {
   margin-right: 6px;
+}
+
+.login_container {
+  padding: 10px;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.content_container {
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header_container {
+}
+
+.upper_picture_container {
+  margin-top: 50px;
+
+  img {
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+.media_button {
+  margin-top: 5px;
 }

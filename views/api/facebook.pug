@@ -1,26 +1,23 @@
 extends ../layout
 
 block content
-  h3
-    i.fa.fa-user
-    |  My Profile
-  img.thumbnail(src=profile.profile_picture_url || `https://graph.facebook.com/${profile.id}/picture?type=large`, width='90', height='90', alt=(profile.name || profile.username))
-  h4= profile.name
-  h6 First Name: #{profile.first_name}
-  h6 Last Name: #{profile.last_name}
-  h6 Gender: #{profile.gender}
-  h6 Username: #{profile.username}
-  h6 Link: #{profile.link}
-  h6 Email: #{profile.email}
-  h6 Locale: #{profile.locale}
-  h6 Timezone: #{profile.timezone}
+  .content_container
+    .header_container
+      .upper_picture_container
+        img.thumbnail(src=profile.profile_picture_url || `https://graph.facebook.com/${profile.id}/picture?type=large`, alt=(profile.name || profile.username))
+      h4= profile.name
 
-  .page-header
-    h2
-      i.fa.fa-instagram(style='color: #335397')
-      | Instagram accounts
-  .btn-group.btn-group-justified
-    each igUser in profile.IGUsers
-      a.btn.btn-primary(href=`/instagram/${igUser.id}`)
-        i.fa.fa-check-square-o
-        | #{igUser.username}
+    p Below you should be able to see a list of all Instagram accounts you've linked to bidin.bio. Select one to start automating the bidding.
+    
+    .page-header
+      h2
+        i.fa.fa-instagram(style='color: #335397')
+        | Instagram accounts
+    .btn-group.btn-group-justified
+      each igUser in profile.IGUsers
+        a.btn.btn-primary(href=`/instagram/${igUser.id}`)
+          i.fa.fa-check-square-o
+          | #{igUser.username}
+
+    p If you can't see the expected account or something isn't working, shoot us a message at 
+      a(href='https://www.instagram.com/bidin.bio/') @bidin.bio

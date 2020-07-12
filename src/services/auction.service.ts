@@ -3,7 +3,7 @@ import {
   createCommentForMedia,
   replyForComment, 
 } from "./instagram.service";
-import { Auction, User, AuctionStatus } from '../models';
+import { Auction, AuctionStatus, Renegade, User } from '../models';
 import getToken from '../util/getToken';
 
 export enum AuctionAnswers {
@@ -23,30 +23,72 @@ export async function closeAllEndedAuctions() {
     auction.status = AuctionStatus.finished;
     auction.winner = winner;
     await auction.save();
-    await replyForComment({ 
-      commentId: winner.commentId,
+    await sendAuctionEndMessages({
+      commentId: winner.commentId, 
       token: longLiveToken,
-      message: `You got it! I'll DM you soon!`,
-    });
-    await createCommentForMedia({
-      mediaId,
-      token: longLiveToken, 
-      message: `Sold for ${+bin > +winner.ammount? `$${winner.ammount}`: '@ BIN'}`
+      username: winner.username, 
+      mediaId, 
+      ammount: +winner.ammount, 
+      bin,
     })
-    console.log('success');
   }
 }
 
-export async function endAuction({commentId, ammount, bin, auction}) {
-
-  await replyForComment({ 
-    commentId: winner.commentId,
-    token: longLiveToken,
-    message: `You got it! I'll DM you soon!`,
+export async function sendAuctionEndMessages({ commentId, token, username, mediaId, ammount, bin }) {
+  await replyForComment({
+    commentId,
+    token,
+    message: `@${username} Congrats! You got it! I'll DM you soon`,
   });
   await createCommentForMedia({
     mediaId,
-    token: longLiveToken, 
-    message: `Sold for ${+bin > +winner.ammount? `$${winner.ammount}`: '@ BIN'}`
+    token, 
+    message: `🏁The bidding is over. Sold ${+bin > +ammount? `for $${ammount}`: '@ BIN'}`
   })
+}
+
+export async function winnerBackedOut(mediaId: string) {
+  const auction = await Auction.findOne({ mediaId });
+  const renegade = auction.winner;
+
+  if(!renegade) {
+    return auction;
+  }
+
+  await Renegade.update({
+    username: renegade.username,
+  }, {
+    username: renegade.username,
+    "$addToSet": { 
+      auctions: auction._id
+    }
+  }, {upsert: true});
+
+  const newBids = auction.bids.map( bid => {
+    if (bid.username === renegade.username) {
+      bid.renegade = true;
+    }
+    return bid;
+  });
+
+  const newBidsWithoutRenegate = newBids.filter(bid => !bid.renegade);
+  const newWinner = newBidsWithoutRenegate[newBidsWithoutRenegate.length - 1];
+
+  if (!newWinner) {
+    return await Auction.findByIdAndUpdate({
+      _id: auction._id,
+    }, {
+      price: auction.startingPrice,
+      bids: newBids,
+      winner: null
+    });
+  }
+
+  return await Auction.findByIdAndUpdate({
+    _id: auction._id,
+  }, {
+    price: newWinner.ammount,
+    bids: newBids,
+    winner: newWinner
+  });
 }

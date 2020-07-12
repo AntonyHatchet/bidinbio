@@ -1,11 +1,12 @@
 .medias {
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 5%;
 
   .media {
-    width: 300px;
-    height: 300px;
+    width: 40%;
     margin: 10px;
     flex-direction: column;
 

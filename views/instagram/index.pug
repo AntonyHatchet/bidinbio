@@ -1,21 +1,26 @@
 extends ../layout
 
 block content
-  h3
-    i.fa.fa-user
-    |  My Profile
-  img.thumbnail(src=account.profile_picture_url || 'https://gravatar.com/avatar/?d=retro', width='90', height='90', alt=(account.name || account.username))
-  h4=account.username
-  h6 Name: #{account.name}
-  h6 Followers: #{account.followers_count}
-  h6 Follows: #{account.follows_count}
+  .content_container
+    .header_container
+      .upper_picture_container
+        img.thumbnail(src=account.profile_picture_url, alt=(account.name || account.username))
+      h4= account.username
 
+    p To start the automation:
+      ul
+        li Make a post on Instagram (just like you always do)
+        li In the caption, add a command in the format: @bidin.bio 6/30, where "6" is the starting price and "30" is "Buy it now" (aka BIN).
+        li Check in the comments below the post if you've received a reply from @bidin.bio the automation has started.
+        li To keep track of the bids, reload this page and select the post from the list.
 
-  h6 Media:
-  div.medias
-    each media in medias
-      div.media
-        a(href=media.permalink, target='_blank')
-          img(src=media.media_url)
-        form(action=`/auction/${media.auctionId? media.auctionId : `new/${media.id}`}`)
-          button(type='submit') #{media.auctionId ? 'Open auction' : 'Create auction'}
+    h4 Automations:
+    div.medias
+      each media in medias
+        if(media.auctionId)
+          div.media
+            a(href=`/auction/${media.id}`)
+              img(src=media.media_url)
+            .media_button
+              form(action=`/auction/${media.id}`)
+                button(type='submit') View

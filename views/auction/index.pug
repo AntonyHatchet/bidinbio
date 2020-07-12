@@ -1,41 +1,65 @@
 extends ../layout
 
 block content
-  h3
-    i.fa.fa-user
-    | Auction
-  
   .auction
-    .left-block
+    h3
+    | Automation
+    .img-block
       img(src=auction.media.media_url)
-      p= auction.media.caption
-    .right-block
-      .form-group.row.justify-content-md-center
-        .col-sm-12
-          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='price') Start price
-          .col-sm-12
-            p=auction.price
-      .form-group.row.justify-content-md-center
-        .col-sm-12
-          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='step') Step
-          .col-sm-12
-            p=auction.step
-      .form-group.row.justify-content-md-center
-        .input-daterange.col-sm-12
-          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='start') Start at
-          .col-sm-12(id='time_start')
-            p=auction.start
-          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='end') End at
-          .col-sm-12(id='time_end')
-            p=auction.end
-      .form-group.row.justify-content-md-center
-        .col-sm-12
-          label.col-sm-12.col-form-label.text-left.font-weight-bold(for='prolongation') Prolongation in minutes
-          .col-sm-12
-            p=auction.prolongation
-      form(action=`/auction/${auction.media.id}`, method='delete')
+    .form-group.row.justify-content-md-center
+      .col-sm-12
+        b Status
+      .col-sm-12
+        p=auction.status
+    .form-group.row.justify-content-md-center
+      .col-sm-12
+        b Starting price
+      .col-sm-12
+        p=auction.startingPrice
+    .form-group.row.justify-content-md-center
+      .col-sm-12
+        b BIN
+      .col-sm-12
+        p=auction.bin
+    .form-group.row.justify-content-md-center
+      .col-sm-12
+        b Number of bids
+      .col-sm-12
+        p=auction.bids.length
+      .col-sm-12
+        b Latest bid
+      .col-sm-12
+        if(auction.bids.length > 0)
+          p=`$${auction.bids[auction.bids.length - 1].ammount} by ${auction.bids[auction.bids.length - 1].username}`
+        else
+          p 0
+
+      if (auction.status === 'finished')
         .form-group.row.justify-content-md-center
-          .col-sm-4
-            button.btn.btn.btn-primary(type='submit')
-              i.fa.fa-pencil
-              | Cancel auction
+          .input-daterange.col-sm-12
+            b Winner
+              .col-sm-12(id='time_end')
+              if (auction && auction.winner && auction.winner.username)
+                p=`$${auction.winner.ammount} by ${auction.winner.username}`
+              else
+                p there is no winner
+        if (auction && auction.winner && auction.winner.username)
+          form(action=`/auction/backed/${auction.mediaId}`, method='post')
+            .form-group.row.justify-content-md-center
+              .col-sm-4
+                button.btn.btn.btn-primary(type='submit')
+                  i.fa.fa-pencil
+                  | Buyer backed out
+      else
+        .form-group.row.justify-content-md-center
+          .col-sm-12
+            label.col-sm-12.col-form-label.text-left.font-weight-bold(for='prolongation') Will finish in 
+            .col-sm-12
+              p=(Math.abs(new Date(auction.end).getTime() - new Date().getTime()) / 3600000) > 1 ? `${Math.round(Math.abs(new Date(auction.end).getTime() - new Date().getTime()) / 3600000)} hours`: 'Less that hour'
+        .col-sm-12
+          form(action=`/auction/${auction.media.id}`, method='delete')
+            .form-group.row.justify-content-md-center
+              .col-sm-4
+                button.btn.btn.btn-primary(type='submit')
+                  i.fa.fa-pencil
+                  | Cancel auction
