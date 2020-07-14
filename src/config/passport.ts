@@ -61,7 +61,7 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_ID,
     clientSecret: process.env.FACEBOOK_SECRET,
-    callbackURL: "https://bidinbio.ngrok.io/auth/facebook/callback",
+    callbackURL: "https://bidin.bio/auth/facebook/callback",
     profileFields: ["name", "email", "link", "locale", "timezone"],
     passReqToCallback: true
 }, (req: any, accessToken, refreshToken, profile, done) => {
