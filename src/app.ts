@@ -123,11 +123,7 @@ app.get("/api/v1/hooks/instagram", hooksController.authorizeHook, (req, res) => 
 });
 
 const facebookPermision = [
-    // 'user_photos',
-    // 'read_insights',
-    // 'instagram_manage_insights',
-    // 'pages_manage_metadata',
-    // 'pages_read_engagement'
+    'pages_read_engagement',
     "instagram_basic",
     "instagram_manage_comments",
     "pages_show_list",
