@@ -5,6 +5,7 @@ import {
 } from "./instagram.service";
 import { Auction, AuctionStatus, Renegade, User } from "../models";
 import getToken from "../util/getToken";
+import { IG_ACCOUNT_ID } from "../util/secrets";
 
 export enum AuctionAnswers {
   bidAccepted = "Congrats your bid was accepted!",
@@ -48,9 +49,13 @@ export async function sendAuctionEndMessages({ commentId, token, username, media
     token,
     message: `@${username} Congrats! You got it! I'll DM you soon`,
   });
+
+  const bidInBioUser = await User.findOne({ "businessAccounts.facebook.id": IG_ACCOUNT_ID });
+  const { longLiveToken } = getToken(bidInBioUser, "facebook");
+
   await createCommentForMedia({
     mediaId,
-    token, 
+    token: longLiveToken, 
     message: `🏁The bidding is over. Sold ${+bin > +ammount? `for $${ammount}`: "@ BIN"}`
   });
 }

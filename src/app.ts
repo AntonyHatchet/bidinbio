@@ -22,7 +22,7 @@ import * as userController from "./controllers/user";
 import * as apiController from "./controllers/api";
 import * as auctionController from "./controllers/auction";
 import * as instagramController from "./controllers/instagram";
-import { pollingMentionsAndComments } from './services/pooling.service';
+import { pollingMentionsAndComments } from "./services/pooling.service";
 
 
 // API keys and Passport configuration
@@ -124,8 +124,8 @@ app.get("/api/v1/hooks/instagram", hooksController.authorizeHook, (req, res) => 
 });
 
 const facebookPermision = [
-    'pages_manage_metadata',
-    'pages_read_engagement',
+    "pages_manage_metadata",
+    "pages_read_engagement",
     "instagram_basic",
     "instagram_manage_comments",
     "pages_show_list",

@@ -26,7 +26,7 @@ export const getInstagramPage = async (req: Request, res: Response, next: NextFu
 
   for (const businessAccount of user.businessAccounts.facebook) {
     if (!businessAccount.subscribed) {
-      console.log("!subscribed")
+      console.log("!subscribed");
       const pageToken = await getPageToken(businessAccount.pageId, token.longLiveToken);
       await subscribeToPageWebhooks(businessAccount.pageId, pageToken);
       const newBussinesAccountsArray = user.businessAccounts.facebook.map(acc => {
@@ -34,8 +34,8 @@ export const getInstagramPage = async (req: Request, res: Response, next: NextFu
           acc.subscribed = true;
         }
         return acc;
-      })
-      await User.updateOne({ _id: user._id }, { 'businessAccounts.facebook': newBussinesAccountsArray})
+      });
+      await User.updateOne({ _id: user._id }, { "businessAccounts.facebook": newBussinesAccountsArray});
     }
   }
 

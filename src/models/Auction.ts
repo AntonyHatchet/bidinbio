@@ -12,7 +12,7 @@ export type AuctionDocument = mongoose.Document & {
     mediaId: string;
     userId: string;
     startingPrice: string;
-    price: string;
+    price: string|number;
     bin: number;
     step: string;
     start: Date;
