@@ -17,7 +17,7 @@ export async function closeAllEndedAuctions() {
   for (const auction of auctions) {
     const { mediaId, bids, userId, bin } = auction;
     const winner = bids[bids.length - 1];
-    const user = await User.findOne({ "bussinessAccounts.facebook": userId });
+    const user = await User.findOne({ "businessAccounts.facebook.id": userId });
     const { longLiveToken } = getToken(user, "facebook");
 
     auction.status = AuctionStatus.finished;

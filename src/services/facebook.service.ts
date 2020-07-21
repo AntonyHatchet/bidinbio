@@ -12,7 +12,7 @@ const FacebookUserAttributes = [
     "link",
     "accounts"
 ];
-export const getBussinessAccount = async ({ facebookAccountId, token, userId }: {facebookAccountId: string; token: string; userId: string}) => {
+export const getBusinessAccount = async ({ facebookAccountId, token, userId }: {facebookAccountId: string; token: string; userId: string}) => {
     if(!facebookAccountId) {
         throw Error("facebookAccountId not found");
     }
@@ -28,17 +28,19 @@ export const getBussinessAccount = async ({ facebookAccountId, token, userId }: 
         });
         const user = await User.findOne({ _id: userId });
 
-        console.log({ user, facebookAccountId, instagramBusinessAccount });
-
-        if(user && (!user.bussinessAccounts || !user.bussinessAccounts.facebook.includes(instagramBusinessAccount.id))){
-            user.bussinessAccounts.facebook = user.bussinessAccounts.facebook || [];
-            user.bussinessAccounts.facebook.push(instagramBusinessAccount.id);
+        if(user && instagramBusinessAccount && (!user.businessAccounts || user.businessAccounts.facebook.every(acc => acc.id !== instagramBusinessAccount.id))){
+            user.businessAccounts.facebook = user.businessAccounts.facebook || [];
+            user.businessAccounts.facebook.push({
+                id: instagramBusinessAccount.id,
+                pageId,
+                subscribed: false
+            });
             await user.save();
         }
     
         return { instagramBusinessAccount, pageId };
     } catch (e) {
-        console.log("getBussinessAccount");
+        console.log("getBusinessAccount");
         console.log(e.response && e.response.headers["www-authenticate"] || e.message);
         return {};
     }

@@ -16,11 +16,11 @@ block content
 
     h4 Automations:
     div.medias
-      each media in medias
-        if(media.auctionId)
+      each auction in auctions
+        if(media)
           div.media
-            a(href=`/auction/${media.id}`)
-              img(src=media.media_url)
+            a(href=`/auction/${auction.id}`)
+              img(src=auction.media.media_url)
             .media_button
-              form(action=`/auction/${media.id}`)
+              form(action=`/auction/${auction.id}`)
                 button(type='submit') View

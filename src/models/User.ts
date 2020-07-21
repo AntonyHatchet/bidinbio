@@ -15,6 +15,11 @@ export interface IGUser {
     username: string;
     website: string;
 }
+interface BusinessAccountInfo {
+    id: string;
+    pageId: string;
+    subscribed: boolean;
+}
 export type UserDocument = mongoose.Document & {
     email: string;
     password: string;
@@ -32,8 +37,8 @@ export type UserDocument = mongoose.Document & {
         picture: string;
     };
 
-    bussinessAccounts: {
-        facebook: string[];
+    businessAccounts: {
+        facebook: BusinessAccountInfo[];
     };
 
     comparePassword: comparePasswordFunction;
@@ -66,7 +71,7 @@ const userSchema = new mongoose.Schema({
         website: String,
         picture: String
     },
-    bussinessAccounts: {
+    businessAccounts: {
         facebook: Array,
     }
 }, { timestamps: true });

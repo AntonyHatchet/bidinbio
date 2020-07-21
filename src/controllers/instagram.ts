@@ -5,38 +5,43 @@ import passport from "passport";
 import { User, UserDocument, AuthToken } from "../models/User";
 import { Auction, AuctionDocument } from "../models/Auction";
 import { Request, Response, NextFunction } from "express";
-import { IVerifyOptions } from "passport-local";
 import { WriteError } from "mongodb";
 import { check, sanitize, validationResult } from "express-validator";
 import { loadIGUser, loadAllMedia, createCommentForMedia } from "../services/instagram.service";
+import {
+  getPageToken,
+  subscribeToPageWebhooks,
+} from "../services/facebook.service";
 
 import "../config/passport";
 
-export const getInstagramMedia = async (req: Request, res: Response, next: NextFunction) => {
+export const getInstagramPage = async (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as UserDocument;
   const token = user.tokens.find((token: AuthToken) => token.kind === "facebook");
   const igAccountId = req.params.id;
   const account = await loadIGUser({ igAccountId, token: token.longLiveToken });
-  const medias = await loadAllMedia({ igAccountId, token: token.longLiveToken });
-  const auctions: AuctionDocument[] = [];
+  const auctions = await Auction.find({ userId: igAccountId });
 
-  for(const media of medias) {
-    const auction = await Auction.findOne({ mediaId: media.id });
-    if(auction) {
-      auctions.push(auction);
+  console.log(`Get subscription for user ${user._id}`);
+
+  for (const businessAccount of user.businessAccounts.facebook) {
+    if (!businessAccount.subscribed) {
+      console.log("!subscribed")
+      const pageToken = await getPageToken(businessAccount.pageId, token.longLiveToken);
+      await subscribeToPageWebhooks(businessAccount.pageId, pageToken);
+      const newBussinesAccountsArray = user.businessAccounts.facebook.map(acc => {
+        if(acc.id === businessAccount.id) {
+          acc.subscribed = true;
+        }
+        return acc;
+      })
+      await User.updateOne({ _id: user._id }, { 'businessAccounts.facebook': newBussinesAccountsArray})
     }
   }
-  
+
   res.render("instagram", {
       title: "Instagram",
-      medias: medias.map(media => {
-        for(const auction of auctions) {
-          if(media.id === auction.mediaId){
-            media.auctionId = auction._id;
-          }
-        }
-        return media;
-      }),
+      auctions,
       account
   });
 };

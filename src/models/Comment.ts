@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 export type CommentDocument = mongoose.Document & {
     userId: string;
     mediaId: string;
-    commentid: string;
+    commentId: string;
     text: string;
     igUserId: string;
     username: string;
@@ -13,7 +13,7 @@ export type CommentDocument = mongoose.Document & {
 const commentSchema = new mongoose.Schema({
     userId: String,
     mediaId: String,
-    commentid: String,
+    commentId: String,
     text: String,
     igUserId: String,
     username: String,

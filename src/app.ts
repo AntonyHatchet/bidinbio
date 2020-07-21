@@ -22,6 +22,7 @@ import * as userController from "./controllers/user";
 import * as apiController from "./controllers/api";
 import * as auctionController from "./controllers/auction";
 import * as instagramController from "./controllers/instagram";
+import { pollingMentionsAndComments } from './services/pooling.service';
 
 
 // API keys and Passport configuration
@@ -109,7 +110,7 @@ app.post("/auction/new/:mediaId", passportConfig.isAuthenticated, auctionControl
 
 app.post("/auction/backed/:mediaId", passportConfig.isAuthenticated, auctionController.markWinnerAsBackedOut);
 
-app.get("/instagram/:id", passportConfig.isAuthenticated, instagramController.getInstagramMedia);
+app.get("/instagram/:id", passportConfig.isAuthenticated, instagramController.getInstagramPage);
 app.post("/instagram/:mediaId", passportConfig.isAuthenticated, instagramController.createInstagramComment);
 
 /**
@@ -123,6 +124,7 @@ app.get("/api/v1/hooks/instagram", hooksController.authorizeHook, (req, res) => 
 });
 
 const facebookPermision = [
+    'pages_manage_metadata',
     'pages_read_engagement',
     "instagram_basic",
     "instagram_manage_comments",
@@ -141,6 +143,7 @@ cron.schedule("* * * * *", () => {
     console.log("running every minute to 1");
     console.log(new Date());
     closeAllEndedAuctions();
+    pollingMentionsAndComments();
 });
 
 export default app;

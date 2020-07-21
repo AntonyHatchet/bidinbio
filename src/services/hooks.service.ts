@@ -4,7 +4,6 @@ import {
   loadMediaById,
   replyForMention,
   replyForComment,
-  loadMentionedMedia 
 } from "./instagram.service";
 import { User, Comment, Auction, AuctionStatus } from "../models";
 import { 
@@ -17,26 +16,12 @@ import {
 import getToken from "../util/getToken";
 import { Bid } from "../models/Auction";
 const twenyFourHours = 86400000;
-interface Hook {
-  entry: [
-    {
-      changes: [
-        {
-          field: string;
-          value: MentionHook;
-        }
-      ];
-      time: number;
-      id: string;
-    }
-  ];
-  object: string;
-}
-interface MentionHook {
-  id?: string;
+
+interface CommentHook {
   text?: string;
-  media_id?: string;
-  comment_id?: string;
+  userId?: string;
+  time?: string;
+  commentId?: string;
 }
 
 
@@ -49,38 +34,32 @@ interface StoryInsightsHook {
   exits: number;
   replies: number;
 }
-export const handleCommentsHook = async (data: Hook) => {
-  let { time, id: hookUserId } = data.entry[0]; // eslint-disable-line
-  let incomeMessageId = data.entry[0].changes[0].value.id;
-
-  if (hookUserId === "0"){
-    const randNumber = Math.floor(Math.random() * (auctionMessages.length - 1));
-
-    hookUserId = fakeClientId;
-    incomeMessageId = "17855557361098584";
-
-    console.log({randNumber, incomeMessageId});
+export const handleCommentsHook = async ({ time, userId, text, commentId }: CommentHook) => {
+  const comment = await Comment.findOne({ commentId: commentId });
+  if(comment && comment.commentId){
+    return console.log(`Comment ${commentId} already exist, do nothing`);
   }
 
-  const comment = await Comment.findOne({ commentid: incomeMessageId });
-  if(comment && comment.commentid){
-    return console.log(`Comment ${incomeMessageId} already exist, do nothing`);
+  const bid = getBidFromComment(text);
+
+  if(!bid) {
+    return console.log(`Comment ${commentId} is not a bid, ignore it`);
   }
-  
-  const user = await User.findOne({ "bussinessAccounts.facebook": hookUserId });
+
+  const user = await User.findOne({ "businessAccounts.facebook.id": userId });
   if (!user) {
-    return console.log(`User for key ${hookUserId} not found`);
+    return console.log(`User for key ${userId} not found`);
   }
 
   const { longLiveToken, accessToken } = getToken(user, "facebook");
 
-  const extendedComment = await loadComment(incomeMessageId, longLiveToken);
+  const extendedComment = await loadComment(commentId, longLiveToken);
 
   if(!extendedComment) {
     return console.log("cannot load comment");
   }
 
-  extendedComment.commentid = incomeMessageId;
+  extendedComment.commentId = commentId;
   await Comment.create(extendedComment);
 
   const auction = await Auction.findOne({ mediaId: extendedComment.media.id, status: AuctionStatus.active });
@@ -88,25 +67,19 @@ export const handleCommentsHook = async (data: Hook) => {
     return console.log(`Auction for media ${extendedComment.media.id} is not started yet`);
   }
 
-  const bid = getBidFromComment(extendedComment.text);
-
-  if(!bid) {
-    return console.log(`Comment ${incomeMessageId} is not a bid, ignore it`);
-  }
-
   if (+auction.price >= +bid || +bid < +auction.step) {
-    console.log(`Bid from ${incomeMessageId} is to low: ${bid}`);
+    console.log(`Bid from ${commentId} is to low: ${bid}`);
     extendedComment.replyed = true;
     await Comment.create(extendedComment);
     return await replyForComment({ 
-      commentId: incomeMessageId,
+      commentId: commentId,
       token: longLiveToken,
       message: `@${extendedComment.username}: Current bid is $${auction.price}. You need to bid at least $${+auction.price + +auction.step}`,
     });
   }
 
   if(auction.bin && +auction.bin <= +bid) {
-    console.log(`Bid from ${incomeMessageId} is equal or more than BIN, auction over`);
+    console.log(`Bid from ${commentId} is equal or more than BIN, auction over`);
     const winner: Bid = {
       ammount: bid,
       username: extendedComment.username,
@@ -121,7 +94,7 @@ export const handleCommentsHook = async (data: Hook) => {
     await auction.save();
 
     await replyForComment({ 
-      commentId: incomeMessageId,
+      commentId: commentId,
       token: longLiveToken,
       message: `@${winner.username} Congrats! You got it! I'll DM you soon`,
     });
@@ -158,22 +131,31 @@ export const handleCommentsHook = async (data: Hook) => {
   extendedComment.replyed = true;
   await Comment.create(extendedComment);
 };
-export const handleMentionsHook = async (data: Hook) => {
-  let { time, id: hookUserId } = data.entry[0]; // eslint-disable-line
-  let { media_id } = data.entry[0].changes[0].value;
-  
-  if (hookUserId === "0") {
-    hookUserId = bidInBioId;
-    media_id = mentions.caption.value.media_id;
+
+interface MentionHook {
+  time?: string;
+  mediaId?: string;
+  userId?: string;
+}
+export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook) => {
+  // if (userId === "0") {
+  //   userId = bidInBioId;
+  //   mediaId = mentions.caption.value.media_id;
+  // }
+  console.log('handleMentionsHook', userId, mediaId)
+  const existedAuction = await Auction.findOne({ mediaId });
+  if (existedAuction) {
+    return console.log(`Auction for media ${mediaId} already exist!`);
   }
 
-  const user = await User.findOne({ "bussinessAccounts.facebook": hookUserId });
+  const user = await User.findOne({ "businessAccounts.facebook.id": userId });
   if (!user) {
-    return console.log(`User for key ${hookUserId} not found`);
+    return console.log(`User for key ${userId} not found`);
   }
+
 
   const { longLiveToken } = getToken(user, "facebook");
-  const extendedMedia = await loadMediaById({ mediaId: media_id, token: longLiveToken });
+  const extendedMedia = await loadMediaById({ mediaId, token: longLiveToken });
   if (!extendedMedia) {
     return console.log("Cannot load media");
   }
@@ -183,13 +165,9 @@ export const handleMentionsHook = async (data: Hook) => {
     return console.log("No auction attributes found in message");
   }
 
-  const existedAuction = await Auction.findOne({ mediaId: extendedMedia.id });
-  if (existedAuction) {
-    return console.log(`Auction for media ${extendedMedia.id} already exist!`);
-  }
 
   const newAuction = await Auction.create({
-    userId: hookUserId,
+    userId,
     mediaId: extendedMedia.id,
     startingPrice: auctionAtributes.startPrice,
     price: auctionAtributes.startPrice,
@@ -205,7 +183,7 @@ export const handleMentionsHook = async (data: Hook) => {
   });
 
   await replyForMention({
-    userId: hookUserId,
+    userId,
     media_id: extendedMedia.id,
     token: longLiveToken,
     message: `🏁 Bidding started! 

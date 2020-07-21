@@ -1,5 +1,7 @@
 import axios from "axios";
 import { Media } from "../models/Media";
+import { User } from "../models";
+import getToken from "../util/getToken";
 
 interface RequestParams {
     igAccountId: string; 
@@ -36,7 +38,6 @@ export const loadAllMedia = async ({ igAccountId, token }: RequestParams) => {
     } catch (e) {
         console.log(e);
     }
-
 };
 
 export const loadMediaById = async ({ mediaId, token }: { mediaId: string; token: string }) => {
@@ -64,6 +65,21 @@ export const loadComment = async (commentId: string, token: string) => {
             params: {
                 fields: CommentAttributes.join(","),
             },
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+        console.log(data);
+        return data;
+    } catch (e) {
+        console.log("loadComment");
+        console.log(e);
+    }
+};
+
+export const loadComments = async (mediaId: string, token: string) => {
+    try {
+        const { data } = await axios.get(`/${mediaId}/comments`, {
             headers: {
                 Authorization: "Bearer " + token
             }
@@ -185,7 +201,7 @@ interface MentionedMedia {
     token: string;
 }
 export const loadMentionedMedia = async ({ userId, media_id, token }: MentionedMedia) => {
-        try {
+    try {
         const { data } = await axios({
             method: "get",
             url: `/${userId}`,

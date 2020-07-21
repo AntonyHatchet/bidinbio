@@ -25,17 +25,29 @@ export const authorizeHook = (req: Request & {rawBody: any}, res: Response, next
 };
 
 export const hookRouter = (req: Request, res: Response) => {
-    switch(req.body.entry[0].changes[0].field) {
-        case HookType.comments:
-            handleCommentsHook(req.body);
-            break;
-        case HookType.mentions:
-            handleMentionsHook(req.body);
-            break;
-        case HookType.story_insights:
-            handleStoryInsightsHook(req.body.entry[0].changes[0].value);
-            break;
-        default:
-            console.log("Unhandled hook type");
+    const { body } = req;
+    if(body.object !== "instagram") {
+        return;
+    }
+    if(body && body.entry && body.entry[0] && body.entry[0].changes && body.entry[0].changes[0] && body.entry[0].changes[0].field) {
+        switch(body.entry[0].changes[0].field) {
+            case HookType.comments: {
+                const { time, id: userId } = body.entry[0];
+                const { id: commentId, text } = body.entry[0].changes[0].value;
+                handleCommentsHook({ time, userId, text, commentId });
+                break;
+            }
+            case HookType.mentions: {
+                const { time, id: userId } = body.entry[0];
+                const { media_id: mediaId } = body.entry[0].changes[0].value;
+                handleMentionsHook({ time, userId, mediaId });
+                break;
+            }
+            case HookType.story_insights:
+                handleStoryInsightsHook(req.body.entry[0].changes[0].value);
+                break;
+            default:
+                console.log("Unhandled hook type");
+        }
     }
 };

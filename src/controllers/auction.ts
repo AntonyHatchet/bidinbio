@@ -6,7 +6,7 @@ import { Response, Request, NextFunction } from "express";
 import { AuthToken, UserDocument } from "../models/User";
 import { Auction, AuctionStatus } from "../models/Auction";
 import { winnerBackedOut } from "../services/auction.service";
-import { getBussinessAccount, getFacebookUser } from "../services/facebook.service";
+import { getFacebookUser } from "../services/facebook.service";
 import { createCommentForMedia, loadIGUser, loadAllMedia, loadMediaById } from "../services/instagram.service";
 import getToken from "../util/getToken";
 

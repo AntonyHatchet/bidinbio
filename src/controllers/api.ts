@@ -4,7 +4,7 @@ import axios from "axios";
 import { Response, Request, NextFunction } from "express";
 import { AuthToken, User, UserDocument } from "../models/User";
 import {
-    getBussinessAccount,
+    getBusinessAccount,
     getFacebookUser,
     getLongTermUserKey,
     getPageToken,
@@ -36,41 +36,17 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
     const longTermToken = await getLongTermUserKey(token.accessToken);
     
     for(const account of accounts.data) {
-        const { instagramBusinessAccount, pageId } = await getBussinessAccount({ 
+        await getBusinessAccount({ 
             facebookAccountId: account.id, 
             token: token.accessToken,
             userId: user._id,
         });
-        const pageToken = await getPageToken(pageId, longTermToken);
-
-        if(pageId){
-            await subscribeToPageWebhooks(pageId, pageToken);
-        }
-
-        if(instagramBusinessAccount && instagramBusinessAccount.id) {
-            instagramBusinessAccountIds.add(instagramBusinessAccount.id);
-        }
     }
 
     const IGUsers = [];
     for(const igAccountId of instagramBusinessAccountIds) {
         const account = await loadIGUser({igAccountId, token: token.accessToken});
         IGUsers.push(account);
-    }
-
-    interface MediaType {
-        [key: string]: any;
-    }
-    const mediaByProfile: MediaType = {};
-    for(const igaccount of instagramBusinessAccountIds) {
-        const medias = await loadAllMedia({igAccountId: igaccount, token: token.accessToken});
-
-        for(const media of medias) {
-            if(!mediaByProfile[igaccount]){
-                mediaByProfile[igaccount] = [];
-            }
-            mediaByProfile[igaccount].push(media);
-        }
     }
     
     res.render("api/facebook", {
