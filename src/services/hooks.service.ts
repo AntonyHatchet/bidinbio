@@ -7,7 +7,7 @@ import {
 } from "./instagram.service";
 import { sendAuctionEndMessages } from "./auction.service";
 import { User, Comment, Auction, AuctionStatus } from "../models";
-import { 
+import {
   media, 
   auctionMessages,
   mentions,
@@ -195,6 +195,12 @@ export const handleStoryInsightsHook = async (data: StoryInsightsHook) => {
 // private 
 
 function getBidFromComment(comment: string) {
+  if(comment.indexOf('🏁 Bidding started!') !== -1) {
+    return {
+      bid: false,
+      bin: false
+    }
+  }
   const bid: RegExpMatchArray | null = comment.match(/\d+/m);
   const bin: RegExpMatchArray | null = comment.toLowerCase().match(/bin/);
 

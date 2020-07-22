@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import {
   createCommentForMedia,
-  replyForComment, 
+  replyForComment,
+  replyForMention,
 } from "./instagram.service";
 import { Auction, AuctionStatus, Renegade, User } from "../models";
 import getToken from "../util/getToken";
@@ -53,7 +54,8 @@ export async function sendAuctionEndMessages({ commentId, token, username, media
   const bidInBioUser = await User.findOne({ "businessAccounts.facebook.id": IG_ACCOUNT_ID });
   const { longLiveToken } = getToken(bidInBioUser, "facebook");
 
-  await createCommentForMedia({
+  await replyForMention({
+    userId: IG_ACCOUNT_ID,
     mediaId,
     token: longLiveToken, 
     message: `🏁The bidding is over. Sold ${+bin > +ammount? `for $${ammount}`: "@ BIN"}`

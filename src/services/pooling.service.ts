@@ -1,4 +1,6 @@
 import axios from "axios";
+import moment from "moment";
+
 import { Media } from "../models/Media";
 import { User, Auction } from "../models";
 import getToken from "../util/getToken";
@@ -37,7 +39,13 @@ async function updateStateForUser(igAccountId: string, longLiveToken: string) {
   console.log("auctions", auctions);
 
   for (const auction of auctions) {
-    const { data:comments } = await loadComments(auction.mediaId, longLiveToken);
+    const { data: comments } = await loadComments(auction.mediaId, longLiveToken);
+    comments.sort((a, b) => {
+      if(moment(a).isAfter(moment(b))){
+        return 1;
+      }
+      return -1;
+    })
     console.log("comments", comments.length);
     console.log("comments", comments);
 
