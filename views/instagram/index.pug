@@ -17,7 +17,7 @@ block content
     h4 Automations:
     div.medias
       each auction in auctions
-        if(media)
+        if(auction)
           div.media
             a(href=`/auction/${auction.id}`)
               img(src=auction.media.media_url)
