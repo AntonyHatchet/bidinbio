@@ -58,4 +58,5 @@ async function updateStateForUser(igAccountId: string, longLiveToken: string) {
       }
     }
   }
+  return;
 }
