@@ -195,11 +195,11 @@ export const handleStoryInsightsHook = async (data: StoryInsightsHook) => {
 // private 
 
 function getBidFromComment(comment: string) {
-  if(comment.indexOf('🏁 Bidding started!') !== -1) {
+  if(comment.indexOf("🏁 Bidding started!") !== -1) {
     return {
-      bid: false,
-      bin: false
-    }
+      bid: null,
+      bin: null
+    };
   }
   const bid: RegExpMatchArray | null = comment.match(/\d+/m);
   const bin: RegExpMatchArray | null = comment.toLowerCase().match(/bin/);

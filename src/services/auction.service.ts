@@ -56,7 +56,7 @@ export async function sendAuctionEndMessages({ commentId, token, username, media
 
   await replyForMention({
     userId: IG_ACCOUNT_ID,
-    mediaId,
+    media_id: mediaId,
     token: longLiveToken, 
     message: `🏁The bidding is over. Sold ${+bin > +ammount? `for $${ammount}`: "@ BIN"}`
   });

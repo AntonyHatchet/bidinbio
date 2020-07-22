@@ -40,12 +40,12 @@ async function updateStateForUser(igAccountId: string, longLiveToken: string) {
 
   for (const auction of auctions) {
     const { data: comments } = await loadComments(auction.mediaId, longLiveToken);
-    comments.sort((a, b) => {
+    comments.sort((a: string, b: string) => {
       if(moment(a).isAfter(moment(b))){
         return 1;
       }
       return -1;
-    })
+    });
     console.log("comments", comments.length);
     console.log("comments", comments);
 
