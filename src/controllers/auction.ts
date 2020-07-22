@@ -15,8 +15,8 @@ axios.defaults.baseURL = "https://graph.facebook.com/v7.0";
 export const getAuction = async (req: Request, res: Response) => {
   const user = req.user as UserDocument;
   const { accessToken: token } = user.tokens.find((token: AuthToken) => token.kind === "facebook");
-  const mediaId = req.params.mediaId;
-  const auction = await Auction.findOne({ mediaId });
+  const auctionId = req.params.auctionId;
+  const auction = await Auction.findOne({ _id: auctionId });
 
   return res.render("auction/index", {
     title: "Automation",
