@@ -33,13 +33,19 @@ async function updateStateForUser(igAccountId: string, longLiveToken: string) {
     await handleMentionsHook({ time: (new Date()).toDateString(), userId: igAccountId, mediaId: media.id });
   }
   const auctions = await Auction.find({ status: "active" });
+  console.log("auctions", auctions.length);
+
   for (const auction of auctions) {
     const comments = await loadComments(auction.mediaId, longLiveToken);
+    console.log("comments", comments.length);
 
     if(comments && comments.length) {
       const unansweredMessages = comments.filter((comment: CommentDocument) => auction.bids.every(bid => bid.commentId !== comment.id));
+      console.log("unansweredMessages", unansweredMessages.length);
 
       for (const message of unansweredMessages) {
+        console.log("send message", message);
+
         await handleCommentsHook({
           time: message.timestamp,
           userId: igAccountId,
