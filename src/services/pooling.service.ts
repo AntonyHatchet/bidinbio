@@ -37,7 +37,7 @@ async function updateStateForUser(igAccountId: string, longLiveToken: string) {
   console.log("auctions", auctions);
 
   for (const auction of auctions) {
-    const comments = await loadComments(auction.mediaId, longLiveToken);
+    const { data:comments } = await loadComments(auction.mediaId, longLiveToken);
     console.log("comments", comments.length);
     console.log("comments", comments);
 
