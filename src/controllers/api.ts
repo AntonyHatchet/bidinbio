@@ -36,11 +36,12 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
     const longTermToken = await getLongTermUserKey(token.accessToken);
     
     for(const account of accounts.data) {
-        await getBusinessAccount({ 
+        const { instagramBusinessAccount } = await getBusinessAccount({ 
             facebookAccountId: account.id, 
             token: token.accessToken,
             userId: user._id,
         });
+        instagramBusinessAccountIds.add(instagramBusinessAccount.id)
     }
 
     const IGUsers = [];
