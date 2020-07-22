@@ -23,6 +23,7 @@ export const getInstagramPage = async (req: Request, res: Response, next: NextFu
   const auctions = await Auction.find({ userId: igAccountId });
 
   console.log(`Get subscription for user ${user._id}`);
+  console.log(`Found auctions ${JSON.stringify(auctions)} for user ${igAccountId}`);
 
   for (const businessAccount of user.businessAccounts.facebook) {
     if (businessAccount.id === igAccountId && !businessAccount.subscribed) {

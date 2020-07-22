@@ -35,15 +35,18 @@ async function updateStateForUser(igAccountId: string, longLiveToken: string) {
   const auctions = await Auction.find({ status: "active" });
   for (const auction of auctions) {
     const comments = await loadComments(auction.mediaId, longLiveToken);
-    const unansweredMessages = comments.filter((comment: CommentDocument) => auction.bids.every(bid => bid.commentId !== comment.id));
 
-    for (const message of unansweredMessages) {
-      await handleCommentsHook({
-        time: message.timestamp,
-        userId: igAccountId,
-        text: message.text,
-        commentId: message.id
-      });
+    if(comments && comments.length) {
+      const unansweredMessages = comments.filter((comment: CommentDocument) => auction.bids.every(bid => bid.commentId !== comment.id));
+
+      for (const message of unansweredMessages) {
+        await handleCommentsHook({
+          time: message.timestamp,
+          userId: igAccountId,
+          text: message.text,
+          commentId: message.id
+        });
+      }
     }
   }
 }
