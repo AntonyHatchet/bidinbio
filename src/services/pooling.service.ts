@@ -34,14 +34,17 @@ async function updateStateForUser(igAccountId: string, longLiveToken: string) {
   }
   const auctions = await Auction.find({ status: "active" });
   console.log("auctions", auctions.length);
+  console.log("auctions", auctions);
 
   for (const auction of auctions) {
     const comments = await loadComments(auction.mediaId, longLiveToken);
     console.log("comments", comments.length);
+    console.log("comments", comments);
 
     if(comments && comments.length) {
       const unansweredMessages = comments.filter((comment: CommentDocument) => auction.bids.every(bid => bid.commentId !== comment.id));
       console.log("unansweredMessages", unansweredMessages.length);
+      console.log("unansweredMessages", unansweredMessages);
 
       for (const message of unansweredMessages) {
         console.log("send message", message);
