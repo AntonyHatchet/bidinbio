@@ -41,7 +41,9 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
             token: token.accessToken,
             userId: user._id,
         });
-        instagramBusinessAccountIds.add(instagramBusinessAccount.id)
+        if(instagramBusinessAccount) {
+            instagramBusinessAccountIds.add(instagramBusinessAccount.id);
+        }
     }
 
     const IGUsers = [];
