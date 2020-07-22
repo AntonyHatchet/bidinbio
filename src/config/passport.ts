@@ -5,6 +5,7 @@ import _ from "lodash";
 import { User, UserDocument } from "../models/User";
 import { Request, Response, NextFunction } from "express";
 import { getLongTermUserKey } from "../services/facebook.service";
+import { prod } from "../util/secrets";
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
@@ -61,7 +62,7 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_ID,
     clientSecret: process.env.FACEBOOK_SECRET,
-    callbackURL: "https://bidinbio.ngrok.io/auth/facebook/callback",//"https://app.bidin.bio/auth/facebook/callback",
+    callbackURL: prod ? "https://app.bidin.bio/auth/facebook/callback" : "https://bidinbio.ngrok.io/auth/facebook/callback",
     profileFields: ["name", "email", "link", "locale", "timezone"],
     passReqToCallback: true
 }, (req: any, accessToken, refreshToken, profile, done) => {
