@@ -25,7 +25,7 @@ export const getInstagramPage = async (req: Request, res: Response, next: NextFu
   console.log(`Get subscription for user ${user._id}`);
 
   for (const businessAccount of user.businessAccounts.facebook) {
-    if (!businessAccount.subscribed) {
+    if (businessAccount.id === igAccountId && !businessAccount.subscribed) {
       console.log("!subscribed");
       const pageToken = await getPageToken(businessAccount.pageId, token.longLiveToken);
       await subscribeToPageWebhooks(businessAccount.pageId, pageToken);
