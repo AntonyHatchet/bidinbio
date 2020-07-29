@@ -62,18 +62,20 @@ export const loadMediaById = async ({ mediaId, token }: { mediaId: string; token
 export const loadComment = async (commentId: string, token: string) => {
     try {
         const { data } = await axios.get(`/${commentId}`, {
-            // params: {
-            //     fields: CommentAttributes.join(","),
-            // },
+            params: {
+                fields: CommentAttributes.join(","),
+            },
             headers: {
                 Authorization: "Bearer " + token
             }
         });
+        console.log("loadComment");
         console.log(data);
         return data;
     } catch (e) {
         console.log("loadComment");
         console.log(e);
+        return
     }
 };
 
@@ -212,7 +214,7 @@ export const loadMentionedMedia = async ({ userId, media_id, token }: MentionedM
                 Authorization: "Bearer " + token
             }
         });
-        console.log(data)
+        console.log(data);
         return data.mentioned_media;
     } catch(e) {
         console.log("loadMentionedMedia");

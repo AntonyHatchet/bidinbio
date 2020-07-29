@@ -65,6 +65,10 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
   extendedComment.commentId = commentId;
   await Comment.create(extendedComment);
 
+  if(!extendedComment.media) {
+    return console.log("cannot find media for comment");
+  }
+
   const auction = await Auction.findOne({ mediaId: extendedComment.media.id, status: AuctionStatus.active });
   if(!auction) {
     return console.log(`Auction for media ${extendedComment.media.id} is not started yet`);
