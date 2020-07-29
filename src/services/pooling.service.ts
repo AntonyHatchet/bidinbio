@@ -4,7 +4,7 @@ import moment from "moment";
 import { Media } from "../models/Media";
 import { User, Auction } from "../models";
 import getToken from "../util/getToken";
-import { getMediaIds, loadMentionedMedia, loadComments } from "./instagram.service";
+import { getMediaIds, loadComments } from "./instagram.service";
 import { handleMentionsHook, handleCommentsHook } from "./hooks.service";
 import { UserDocument } from "../models/User";
 import { IG_ACCOUNT_ID } from "../util/secrets";
