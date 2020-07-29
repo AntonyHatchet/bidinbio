@@ -202,7 +202,7 @@ interface MentionedMedia {
 }
 export const loadMentionedMedia = async ({ userId, media_id, token }: MentionedMedia) => {
     try {
-        const { mentioned_media } = await axios({
+        const { data } = await axios({
             method: "get",
             url: `/${userId}`,
             params: {
@@ -212,8 +212,8 @@ export const loadMentionedMedia = async ({ userId, media_id, token }: MentionedM
                 Authorization: "Bearer " + token
             }
         });
-        console.log(mentioned_media)
-        return mentioned_media;
+        console.log(data)
+        return data.mentioned_media;
     } catch(e) {
         console.log("loadMentionedMedia");
         console.log(e);
