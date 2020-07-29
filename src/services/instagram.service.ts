@@ -214,7 +214,7 @@ export const loadMentionedMedia = async ({ userId, media_id, token }: MentionedM
         });
         return data;
     } catch(e) {
-        console.log("replyForMention");
+        console.log("loadMentionedMedia");
         console.log(e);
         return e.message;
     }

@@ -149,9 +149,9 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
   }
 
   const bidInBioUser = await User.findOne({ "businessAccounts.facebook.id": IG_ACCOUNT_ID });
-  const token = getToken(bidInBioUser, "facebook");
+  const { longLiveToken } = getToken(bidInBioUser, "facebook");
 
-  const extendedMedia = await loadMentionedMedia({ userId: IG_ACCOUNT_ID, media_id: mediaId, token });
+  const extendedMedia = await loadMentionedMedia({ userId: IG_ACCOUNT_ID, media_id: mediaId, token: longLiveToken });
   if (!extendedMedia) {
     return console.log("Cannot load media");
   }
