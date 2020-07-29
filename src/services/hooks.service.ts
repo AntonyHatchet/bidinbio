@@ -151,7 +151,7 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
   const bidInBioUser = await User.findOne({ "businessAccounts.facebook.id": IG_ACCOUNT_ID });
   const token = getToken(bidInBioUser, "facebook");
 
-  const extendedMedia = await loadMentionedMedia({ user_id: bidInBioUser, media_id: mediaId, token: longLiveToken });
+  const extendedMedia = await loadMentionedMedia({ userId: IG_ACCOUNT_ID, media_id: mediaId, token });
   if (!extendedMedia) {
     return console.log("Cannot load media");
   }
@@ -176,9 +176,6 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
       caption: extendedMedia.caption
     },
   });
-
-  const bidInBioUser = await User.findOne({ "businessAccounts.facebook.id": IG_ACCOUNT_ID });
-  const token = getToken(bidInBioUser, "facebook");
 
   await replyForMention({
     userId: IG_ACCOUNT_ID,
