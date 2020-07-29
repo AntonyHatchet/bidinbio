@@ -62,9 +62,9 @@ export const loadMediaById = async ({ mediaId, token }: { mediaId: string; token
 export const loadComment = async (commentId: string, token: string) => {
     try {
         const { data } = await axios.get(`/${commentId}`, {
-            params: {
-                fields: CommentAttributes.join(","),
-            },
+            // params: {
+            //     fields: CommentAttributes.join(","),
+            // },
             headers: {
                 Authorization: "Bearer " + token
             }
@@ -87,7 +87,7 @@ export const loadComments = async (mediaId: string, token: string) => {
         console.log(data);
         return data;
     } catch (e) {
-        console.log("loadComment");
+        console.log("loadComments");
         console.log(e);
     }
 };
