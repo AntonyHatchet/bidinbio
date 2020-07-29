@@ -180,7 +180,7 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
   await replyForMention({
     userId: IG_ACCOUNT_ID,
     media_id: extendedMedia.id,
-    token: token.longLiveToken,
+    token: longLiveToken,
     message: `🏁 Bidding started! 
     Starting at: $${auctionAtributes.startPrice}
     Buy it now: $${auctionAtributes.bin}
