@@ -2,6 +2,7 @@ import {
   createCommentForMedia,
   loadComment,
   loadMediaById,
+  loadMentionedMedia,
   replyForMention,
   replyForComment,
 } from "./instagram.service";
@@ -147,8 +148,10 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
     return console.log(`User for key ${userId} not found`);
   }
 
-  const { longLiveToken } = getToken(user, "facebook");
-  const extendedMedia = await loadMediaById({ mediaId, token: longLiveToken });
+  const bidInBioUser = await User.findOne({ "businessAccounts.facebook.id": IG_ACCOUNT_ID });
+  const token = getToken(bidInBioUser, "facebook");
+
+  const extendedMedia = await loadMentionedMedia({ user_id: bidInBioUser, media_id: mediaId, token: longLiveToken });
   if (!extendedMedia) {
     return console.log("Cannot load media");
   }
