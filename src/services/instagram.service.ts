@@ -75,7 +75,7 @@ export const loadComment = async (commentId: string, token: string) => {
     } catch (e) {
         console.log("loadComment");
         console.log(e);
-        return
+        return;
     }
 };
 
