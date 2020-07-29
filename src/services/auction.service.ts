@@ -70,7 +70,7 @@ export async function winnerBackedOut(mediaId: string) {
     return auction;
   }
 
-  await Renegade.update({
+  await Renegade.updateOne({
     username: renegade.username,
   }, {
     username: renegade.username,

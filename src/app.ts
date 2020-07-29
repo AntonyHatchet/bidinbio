@@ -143,7 +143,7 @@ cron.schedule("* * * * *", () => {
     console.log("running every minute to 1");
     console.log(new Date());
     closeAllEndedAuctions();
-    pollingMentionsAndComments();
+    // pollingMentionsAndComments();
 });
 
 export default app;
