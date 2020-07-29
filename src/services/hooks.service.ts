@@ -211,6 +211,9 @@ function getBidFromComment(comment: string) {
 }
 
 function getAuctionAttributes(comment: string) {
+  if(!comment) {
+    return false;
+  }
   const result = comment.match(
     /( ([0-9]+)(?=[^\/]*)\/([0-9]+)(?=[^\/]*)\/([0-9]+)(?=[^\/]*)| ([0-9]+)(?=[^\/]*)\/([0-9]+)(?=[^\/]*))/
   );
