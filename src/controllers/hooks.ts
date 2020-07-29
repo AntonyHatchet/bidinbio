@@ -29,6 +29,9 @@ export const hookRouter = (req: Request, res: Response) => {
     if(body.object !== "instagram") {
         return;
     }
+
+    console.log(body.entry);
+
     if(body && body.entry && body.entry[0] && body.entry[0].changes && body.entry[0].changes[0] && body.entry[0].changes[0].field) {
         switch(body.entry[0].changes[0].field) {
             case HookType.comments: {

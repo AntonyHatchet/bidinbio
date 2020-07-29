@@ -55,7 +55,7 @@ export const loadMediaById = async ({ mediaId, token }: { mediaId: string; token
         return data;
     } catch (e) {
         console.log("loadMediaById");
-        console.log(e);
+        console.log(e.response.headers);
     }
 };
 
@@ -74,7 +74,7 @@ export const loadComment = async (commentId: string, token: string) => {
         return data;
     } catch (e) {
         console.log("loadComment");
-        console.log(e);
+        console.log(e.response.headers);
         return;
     }
 };
@@ -90,7 +90,7 @@ export const loadComments = async (mediaId: string, token: string) => {
         return data;
     } catch (e) {
         console.log("loadComments");
-        console.log(e);
+        console.log(e.response.headers);
     }
 };
 
@@ -218,7 +218,7 @@ export const loadMentionedMedia = async ({ userId, media_id, token }: MentionedM
         return data.mentioned_media;
     } catch(e) {
         console.log("loadMentionedMedia");
-        console.log(e);
+        console.log(e.response.headers);
         return e.message;
     }
 };
