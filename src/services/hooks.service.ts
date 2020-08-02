@@ -106,7 +106,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
     });
   }
 
-  if (+auction.price === +auction.startingPrice || +auction.price <= +bid) {
+  if (+auction.price === +auction.startingPrice && +auction.price <= +bid) {
     auction.bids.push({
       ammount: +bid,
       username: extendedComment.username,
@@ -124,6 +124,14 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
     console.log(`Bid from ${commentId} is to low: ${bid}`);
     extendedComment.replyed = true;
     await Comment.create(extendedComment);
+
+    if(+auction.price === +auction.startingPrice) {
+      return await replyForComment({ 
+        commentId: commentId,
+        token: longLiveToken,
+        message: `@${extendedComment.username}: You need to bid at least $${auction.startingPrice}`,
+      });
+    }
     return await replyForComment({ 
       commentId: commentId,
       token: longLiveToken,
