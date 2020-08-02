@@ -24,10 +24,10 @@ export const authorizeHook = (req: Request & {rawBody: any}, res: Response, next
     res.sendStatus(401);
 };
 
-export const hookRouter = (req: Request, res: Response) => {
+export const hookRouter = async (req: Request, res: Response) => {
     const { body } = req;
     if(body.object !== "instagram") {
-        return;
+        return res.sendStatus(200);;
     }
 
     console.log(body.entry);
@@ -37,20 +37,22 @@ export const hookRouter = (req: Request, res: Response) => {
             case HookType.comments: {
                 const { time, id: userId } = body.entry[0];
                 const { id: commentId, text } = body.entry[0].changes[0].value;
-                handleCommentsHook({ time, userId, text, commentId });
+                await handleCommentsHook({ time, userId, text, commentId });
                 break;
             }
             case HookType.mentions: {
                 const { time, id: userId } = body.entry[0];
                 const { media_id: mediaId } = body.entry[0].changes[0].value;
-                handleMentionsHook({ time, userId, mediaId });
+                await handleMentionsHook({ time, userId, mediaId });
                 break;
             }
             case HookType.story_insights:
-                handleStoryInsightsHook(req.body.entry[0].changes[0].value);
+                await handleStoryInsightsHook(req.body.entry[0].changes[0].value);
                 break;
             default:
                 console.log("Unhandled hook type");
         }
     }
+
+    return res.sendStatus(200);;
 };

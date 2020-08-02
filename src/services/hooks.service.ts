@@ -73,6 +73,11 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
   if(!auction) {
     return console.log(`Auction for media ${extendedComment.media.id} is not started yet`);
   }
+  
+  if(!auction.userId) {
+    auction.userId = userId;
+    await auction.save();
+  }
 
   if(auction.bin && (+auction.bin <= +bid || bin)) {
     console.log(`Bid from ${commentId} is equal or more than BIN, auction over`);
@@ -91,7 +96,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
 
     extendedComment.replyed = true;
     await Comment.create(extendedComment);
-    await sendAuctionEndMessages({
+    return await sendAuctionEndMessages({
       commentId,
       token: longLiveToken,
       username: winner.username,
@@ -166,7 +171,6 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
   }
 
   const newAuction = await Auction.create({
-    userId,
     mediaId: extendedMedia.id,
     startingPrice: auctionAtributes.startPrice,
     price: auctionAtributes.startPrice,
