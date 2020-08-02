@@ -79,7 +79,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
     await auction.save();
   }
 
-  if(auction.bin && (+auction.bin <= +bid || bin)) {
+  if (auction.bin && (+auction.bin <= +bid || bin)) {
     console.log(`Bid from ${commentId} is equal or more than BIN, auction over`);
     const winner: Bid = {
       ammount: bin ? auction.bin : bid,
@@ -104,6 +104,20 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
       ammount: bin ? auction.bin : bid,
       bin: auction.bin
     });
+  }
+
+  if (+auction.price === +auction.startingPrice || +auction.price <= +bid) {
+    auction.bids.push({
+      ammount: +bid,
+      username: extendedComment.username,
+      sended: time,
+      commentId: extendedComment.id,
+      renegade: false,
+    });
+    auction.price = bid;
+    await auction.save();
+    extendedComment.replyed = true;
+    return await Comment.create(extendedComment);
   }
 
   if (+auction.price >= +bid || +bid < +auction.step) {
@@ -137,7 +151,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
   }
 
   extendedComment.replyed = true;
-  await Comment.create(extendedComment);
+  return await Comment.create(extendedComment);
 };
 
 interface MentionHook {
