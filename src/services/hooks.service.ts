@@ -192,6 +192,8 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
     return console.log("No auction attributes found in message");
   }
 
+  console.log("media", { extendedMedia });
+
   const newAuction = await Auction.create({
     mediaId: extendedMedia.id,
     startingPrice: auctionAtributes.startPrice,

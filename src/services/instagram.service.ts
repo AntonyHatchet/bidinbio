@@ -208,7 +208,7 @@ export const loadMentionedMedia = async ({ userId, media_id, token }: MentionedM
             method: "get",
             url: `/${userId}`,
             params: {
-                fields: `mentioned_media.media_id(${media_id}){caption,owner}`,
+                fields: `mentioned_media.media_id(${media_id}){caption,owner,media_url}`,
             },
             headers: {
                 Authorization: "Bearer " + token

@@ -18,6 +18,9 @@ export async function closeAllEndedAuctions() {
   const auctions = await Auction.find({ end: { $lte: new Date() }, status: "active"});
   for (const auction of auctions) {
     const { mediaId, bids, userId, bin } = auction;
+    if (bids.length === 0) {
+      return;
+    }
     const winner = bids[bids.length - 1];
     const user = await User.findOne({ "businessAccounts.facebook.id": userId });
     const { longLiveToken } = getToken(user, "facebook");
@@ -59,6 +62,18 @@ export async function sendAuctionEndMessages({ commentId, token, username, media
     media_id: mediaId,
     token: longLiveToken, 
     message: `🏁The bidding is over. Sold ${+bin > +ammount? `for $${ammount}`: "@ BIN"}`
+  });
+}
+
+export async function sendAuctionEndMessagesWithoutWinner({ commentId, token, username, mediaId, ammount, bin }: AuctionEndMessages) {
+  const bidInBioUser = await User.findOne({ "businessAccounts.facebook.id": IG_ACCOUNT_ID });
+  const { longLiveToken } = getToken(bidInBioUser, "facebook");
+
+  await replyForMention({
+    userId: IG_ACCOUNT_ID,
+    media_id: mediaId,
+    token: longLiveToken, 
+    message: `🏁The bidding is over — no winner this time.`
   });
 }
 
