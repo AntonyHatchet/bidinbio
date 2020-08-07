@@ -73,7 +73,7 @@ export async function sendAuctionEndMessagesWithoutWinner({ commentId, token, us
     userId: IG_ACCOUNT_ID,
     media_id: mediaId,
     token: longLiveToken, 
-    message: `🏁The bidding is over — no winner this time.`
+    message: "🏁The bidding is over — no winner this time."
   });
 }
 

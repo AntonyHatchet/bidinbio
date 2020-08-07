@@ -257,7 +257,7 @@ function getAuctionAttributes(comment: string) {
   return false;
 }
 
-function getBidRaiedAnswer(bid: number, username: string) {
+function getBidRaiedAnswer(bid: string, username: string) {
   const randNumber = getRandomInt(answers.length - 1);
   return answers[randNumber](bid, username);
 }
@@ -267,10 +267,10 @@ function getRandomInt(max: number) {
 }
 
 const answers = [
-  (bid: number, username: string) => `@${username} bid increased to $${bid}!`,
-  (bid: number, username: string) => `@${username} bid raised to ${bid}`,
-  (bid: number, username: string) => `@${username} outbid. Current bid is ${bid}`,
-  (bid: number, username: string) => `@${username} bid has been raised. New bid is ${bid}`,
-  (bid: number, username: string) => `@${username} bid has been increased to ${bid}`,
-  (bid: number, username: string) => `@${username} the new bid is ${bid}`,
-]
+  (bid: string, username: string) => `@${username} bid increased to $${bid}!`,
+  (bid: string, username: string) => `@${username} bid raised to ${bid}`,
+  (bid: string, username: string) => `@${username} outbid. Current bid is ${bid}`,
+  (bid: string, username: string) => `@${username} bid has been raised. New bid is ${bid}`,
+  (bid: string, username: string) => `@${username} bid has been increased to ${bid}`,
+  (bid: string, username: string) => `@${username} the new bid is ${bid}`,
+];
