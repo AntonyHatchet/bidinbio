@@ -57,7 +57,7 @@ block content
             .col-sm-12
               p=(Math.abs(new Date(auction.end).getTime() - new Date().getTime()) / 3600000) > 1 ? `${Math.round(Math.abs(new Date(auction.end).getTime() - new Date().getTime()) / 3600000)} hours`: 'Less that hour'
         .col-sm-12
-          form(action=`/auction/${auction.media.id}`, method='delete')
+          form(action=`/auction/${auction._id}`, method='delete')
             .form-group.row.justify-content-md-center
               .col-sm-4
                 button.btn.btn.btn-primary(type='submit')

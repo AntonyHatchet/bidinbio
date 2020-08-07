@@ -67,8 +67,8 @@ export const createNewAuction = async (req: Request, res: Response) => {
 export const deleteAuction = async (req: Request, res: Response) => {
   const user = req.user as UserDocument;
   const { accessToken: token } = user.tokens.find((token: AuthToken) => token.kind === "facebook");
-  const mediaId = req.params.mediaId;
-  await Auction.update({ mediaId }, { status: AuctionStatus.canceled });
+  const auctionId = req.params.auctionId;
+  await Auction.update({ _id: auctionId }, { status: AuctionStatus.canceled });
 
   return res.redirect("../../../");
 };

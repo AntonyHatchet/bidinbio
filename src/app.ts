@@ -104,7 +104,7 @@ app.post("/account/delete", passportConfig.isAuthenticated, userController.postD
 app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
 
 app.get("/auction/:auctionId", passportConfig.isAuthenticated, auctionController.getAuction);
-app.delete("/auction/:mediaId", passportConfig.isAuthenticated, auctionController.deleteAuction);
+app.delete("/auction/:auctionId", passportConfig.isAuthenticated, auctionController.deleteAuction);
 app.get("/auction/new/:mediaId", passportConfig.isAuthenticated, auctionController.getNewAuction);
 app.post("/auction/new/:mediaId", passportConfig.isAuthenticated, auctionController.createNewAuction);
 
