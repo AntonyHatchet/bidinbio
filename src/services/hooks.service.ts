@@ -154,7 +154,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
     await replyForComment({
       commentId: previousBid.commentId,
       token: longLiveToken,
-      message: `@${previousBid.username} bid increased to $${bid}!`,
+      message: getBidRaiedAnswer(bid, previousBid.username),
     });
   }
 
@@ -256,3 +256,21 @@ function getAuctionAttributes(comment: string) {
   }
   return false;
 }
+
+function getBidRaiedAnswer(bid: number, username: string) {
+  const randNumber = getRandomInt(answers.length - 1);
+  return answers[randNumber](bid, username);
+}
+
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+const answers = [
+  (bid: number, username: string) => `@${username} bid increased to $${bid}!`,
+  (bid: number, username: string) => `@${username} bid raised to ${bid}`,
+  (bid: number, username: string) => `@${username} outbid. Current bid is ${bid}`,
+  (bid: number, username: string) => `@${username} bid has been raised. New bid is ${bid}`,
+  (bid: number, username: string) => `@${username} bid has been increased to ${bid}`,
+  (bid: number, username: string) => `@${username} the new bid is ${bid}`,
+]
