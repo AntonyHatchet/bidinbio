@@ -51,12 +51,12 @@ block content
                   i.fa.fa-pencil
                   | Buyer backed out
       else
-        .form-group.row.justify-content-md-center
-          .col-sm-12
-            label.col-sm-12.col-form-label.text-left.font-weight-bold(for='prolongation') Will finish in 
-            .col-sm-12
-              p=(Math.abs(new Date(auction.end).getTime() - new Date().getTime()) / 3600000) > 1 ? `${Math.round(Math.abs(new Date(auction.end).getTime() - new Date().getTime()) / 3600000)} hours`: 'Less that hour'
         if (auction.status !== 'canceled')
+          .form-group.row.justify-content-md-center
+            .col-sm-12
+              label.col-sm-12.col-form-label.text-left.font-weight-bold(for='prolongation') Will finish in 
+              .col-sm-12
+                p=(Math.abs(new Date(auction.end).getTime() - new Date().getTime()) / 3600000) > 1 ? `${Math.round(Math.abs(new Date(auction.end).getTime() - new Date().getTime()) / 3600000)} hours`: 'Less that hour'
           .col-sm-12
             form(action=`/auction/${auction._id}/delete`, method='post')
               .form-group.row.justify-content-md-center
