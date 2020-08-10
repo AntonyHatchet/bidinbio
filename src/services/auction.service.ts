@@ -79,7 +79,7 @@ export async function sendAuctionEndMessagesWithoutWinner({ commentId, token, us
 
 export async function winnerBackedOut(mediaId: string) {
   const auction = await Auction.findOne({ mediaId });
-  const renegade = auction.winner;
+  const renegade = auction.bids.pop();
 
   if(!renegade) {
     return auction;
@@ -94,31 +94,17 @@ export async function winnerBackedOut(mediaId: string) {
     }
   }, {upsert: true});
 
-  const newBids = auction.bids.map( bid => {
-    if (bid.username === renegade.username) {
-      bid.renegade = true;
-    }
-    return bid;
-  });
-
-  const newBidsWithoutRenegate = newBids.filter(bid => !bid.renegade);
-  const newWinner = newBidsWithoutRenegate[newBidsWithoutRenegate.length - 1];
-
+  const newWinner = auction.bids[auction.bids.length - 1];
+  
   if (!newWinner) {
-    return await Auction.findByIdAndUpdate({
-      _id: auction._id,
-    }, {
-      price: auction.startingPrice,
-      bids: newBids,
-      winner: null
-    });
+    auction.price = auction.startingPrice;
+    auction.winner = null;
+
+    return await auction.save();
   }
 
-  return await Auction.findByIdAndUpdate({
-    _id: auction._id,
-  }, {
-    price: newWinner.ammount,
-    bids: newBids,
-    winner: newWinner
-  });
+  auction.price = newWinner.ammount,
+  auction.winner = newWinner;
+
+  return await auction.save();
 }

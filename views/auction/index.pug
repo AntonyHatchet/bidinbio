@@ -30,7 +30,8 @@ block content
         b Latest bid
       .col-sm-12
         if(auction.bids.length > 0)
-          p=`$${auction.bids[auction.bids.length - 1].ammount} by ${auction.bids[auction.bids.length - 1].username}`
+          p=`$${auction.bids[auction.bids.length - 1].ammount} by ` 
+            a(target="_blank" href=`https://www.instagram.com/${auction.bids[auction.bids.length - 1].username}`)=`@${auction.bids[auction.bids.length - 1].username}`
         else
           p 0
 
@@ -40,10 +41,11 @@ block content
             b Winner
               .col-sm-12(id='time_end')
               if (auction && auction.winner && auction.winner.username)
-                p=`$${auction.winner.ammount} by ${auction.winner.username}`
+                p=`$${auction.winner.ammount} by ` 
+                  a(target="_blank" href=`https://www.instagram.com/${auction.winner.username}`)=`@${auction.winner.username}`
               else
                 p there is no winner
-        if (auction && auction.winner && auction.winner.username)
+        if (auction && (auction.winner || auction.bids.length > 0))
           form(action=`/auction/backed/${auction.mediaId}`, method='post')
             .form-group.row.justify-content-md-center
               .col-sm-4

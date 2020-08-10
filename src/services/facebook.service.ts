@@ -40,7 +40,8 @@ export const getBusinessAccount = async ({ facebookAccountId, token, userId }: {
     
         return { instagramBusinessAccount, pageId };
     } catch (e) {
-        console.log("getBusinessAccount");
+        console.log("getBusinessAccount");        
+        console.log(JSON.stringify(e));
         console.log(e.response && e.response.headers["www-authenticate"] || e.message);
         return {};
     }
@@ -57,6 +58,7 @@ export const getFacebookUser = async (token: string) => {
         return data;
     } catch (e) {
         console.log("getFacebookUser");
+        console.log(JSON.stringify(e));
         console.log(e.response && e.response.headers["www-authenticate"] || e.message);
     }
 };
@@ -74,6 +76,7 @@ export const getLongTermUserKey = async (token: string) => {
         return access_token;
     } catch (e) {
         console.log("getLongTermUserKey");
+        console.log(JSON.stringify(e));
         console.log(e.response && e.response.headers["www-authenticate"] || e.message);
         return {};
     }
@@ -92,6 +95,7 @@ export const getPageToken = async (pageId: string, token: string) => {
         return access_token;
     } catch (e) {
         console.log("getPageToken");
+        console.log(JSON.stringify(e));
         console.log(e.response && e.response.headers["www-authenticate"] || e.message);
         return {};
     }
@@ -110,6 +114,6 @@ export const subscribeToPageWebhooks = async (pageId: string, token: string) => 
         });
     } catch(e) {
         console.log("subscribeToPageWebhooks");
-        console.log(e.response && e.response.headers["www-authenticate"] || e.message);
+        console.log(JSON.stringify(e));
     }
 };

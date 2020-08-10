@@ -82,14 +82,14 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
   if (auction.bin && (+auction.bin <= +bid || bin)) {
     console.log(`Bid from ${commentId} is equal or more than BIN, auction over`);
     const winner: Bid = {
-      ammount: bin ? auction.bin : bid,
+      ammount: bin ? auction.bin : +bid,
       username: extendedComment.username,
       sended: time,
       commentId: extendedComment.id,
       renegade: false,
     };
     auction.bids.push(winner);
-    auction.price = bin ? auction.bin : bid;
+    auction.price = bin ? auction.bin : +bid;
     auction.status = AuctionStatus.finished;
     auction.winner = winner;
     await auction.save();
@@ -114,7 +114,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
       commentId: extendedComment.id,
       renegade: false,
     });
-    auction.price = bid;
+    auction.price = +bid;
     await auction.save();
     extendedComment.replyed = true;
     return await Comment.create(extendedComment);
@@ -147,7 +147,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
     commentId: extendedComment.id,
     renegade: false,
   });
-  auction.price = bid;
+  auction.price = +bid;
 
   await auction.save();
   if (previousBid) {

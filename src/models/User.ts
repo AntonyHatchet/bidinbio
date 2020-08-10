@@ -35,6 +35,7 @@ export type UserDocument = mongoose.Document & {
         location: string;
         website: string;
         picture: string;
+        username: string;
     };
 
     businessAccounts: {
@@ -69,7 +70,8 @@ const userSchema = new mongoose.Schema({
         gender: String,
         location: String,
         website: String,
-        picture: String
+        picture: String,
+        username: String
     },
     businessAccounts: {
         facebook: Array,

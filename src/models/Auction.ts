@@ -11,10 +11,10 @@ export type AuctionDocument = mongoose.Document & {
     media: Media;
     mediaId: string;
     userId: string;
-    startingPrice: string;
-    price: string|number;
+    startingPrice: number;
+    price: number;
     bin: number;
-    step: string;
+    step: number;
     start: Date;
     end: Date;
     prolongation: string;
@@ -23,7 +23,7 @@ export type AuctionDocument = mongoose.Document & {
     status: AuctionStatus;
 };
 export interface Bid {
-    ammount: number | string;
+    ammount: number;
     username: string;
     sended: Date | string | number;
     commentId: string;
@@ -33,8 +33,8 @@ export interface Bid {
 const auctionSchema = new mongoose.Schema({
     userId: String,
     mediaId: String,
-    price: String,
-    startingPrice: String,
+    price: Number,
+    startingPrice: Number,
     bin: Number,
     step: String,
     start: Date,

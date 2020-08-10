@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+  .content_container
+    .header_container
+      .upper_picture_container
+        img.thumbnail(src=account.profile_picture_url, alt=(account.name || account.username))
+      h4= account.username
+
+    h4 Users:
+    div.medias
+      each account in accounts
+        if(account)
+          div
+            .upper_picture_container
+              p=account.name
+              a(target="_blank" href=`https://www.instagram.com/${account.username}`)=`@${account.username}`
+              img.thumbnail(src=account.avatar, alt=(account.name || account.username))
+              br
+              br
+              p=`Active auctions ${account.total.auctions.started || 0}`
+              p=`Ended auctions ${account.total.auctions.ended || 0}`
+              p=`Total bets ${account.total.bets || 0}`
+              p=`Total money income ${account.total.money || 0}`
+          

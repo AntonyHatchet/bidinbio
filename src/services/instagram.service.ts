@@ -18,12 +18,16 @@ const CommentAttributes = [
     "media", "text", "like_count", "timestamp", "user", "username", "replies", "id"
 ];
 export const getMediaIds = async ({ igAccountId, token }: RequestParams) => {
-    const { data: { data: mediaIds } } = await axios.get(`/${igAccountId}/media`, {
-        headers: {
-            Authorization: "Bearer " + token
-        }
-    });
-    return mediaIds;
+    try {
+        const { data: { data: mediaIds } } = await axios.get(`/${igAccountId}/media`, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+        return mediaIds;
+    } catch (e) {
+        console.log(JSON.stringify(e));
+    }
 };
 
 export const loadAllMedia = async ({ igAccountId, token }: RequestParams) => {
@@ -36,7 +40,7 @@ export const loadAllMedia = async ({ igAccountId, token }: RequestParams) => {
         }
         return medias;
     } catch (e) {
-        console.log(e);
+        console.log(JSON.stringify(e));
     }
 };
 
@@ -55,7 +59,7 @@ export const loadMediaById = async ({ mediaId, token }: { mediaId: string; token
         return data;
     } catch (e) {
         console.log("loadMediaById");
-        console.log(e.response.headers);
+        console.log(JSON.stringify(e));
     }
 };
 
@@ -74,7 +78,7 @@ export const loadComment = async (commentId: string, token: string) => {
         return data;
     } catch (e) {
         console.log("loadComment");
-        console.log(e.response.headers);
+        console.log(JSON.stringify(e));
         return;
     }
 };
@@ -90,7 +94,7 @@ export const loadComments = async (mediaId: string, token: string) => {
         return data;
     } catch (e) {
         console.log("loadComments");
-        console.log(e.response.headers);
+        console.log(JSON.stringify(e));
     }
 };
 
@@ -106,7 +110,7 @@ export const loadIGUser = async ({ igAccountId, token }: RequestParams) => {
         });
         return data;
     } catch (e) {
-        console.log(e);
+        console.log(JSON.stringify(e));
     }
 };
 
@@ -131,7 +135,7 @@ export const createCommentForMedia = async ({ mediaId, token, message }: Comment
         });
         return data;
     } catch(e) {
-        console.log(e.message);
+        console.log(JSON.stringify(e));
         return e.message;
     }
 };
@@ -160,7 +164,7 @@ export const replyForMention = async ({ userId, commentId, media_id, token, mess
         return data;
     } catch(e) {
         console.log("replyForMention");
-        console.log(e);
+        console.log(JSON.stringify(e));
         return e.message;
     }
 };
@@ -192,7 +196,7 @@ export const replyForComment = async ({commentId, token, message}: ReplyForComme
         return data;
     } catch(e) {
         console.log("replyForComment");
-        console.log(e);
+        console.log(JSON.stringify(e));
         return e.message;
     } 
 };
@@ -218,7 +222,7 @@ export const loadMentionedMedia = async ({ userId, media_id, token }: MentionedM
         return data.mentioned_media;
     } catch(e) {
         console.log("loadMentionedMedia");
-        console.log(e.response.headers);
+        console.log(JSON.stringify(e));
         return e.message;
     }
 };
