@@ -22,7 +22,7 @@ export async function closeAllEndedAuctions() {
     console.log(JSON.stringify(auction));
     const { mediaId, bids, userId, bin } = auction;
     if (bids.length === 0) {
-      return;
+      continue;
     }
     const winner = bids[bids.length - 1];
     const user = await User.findOne({ "businessAccounts.facebook.id": userId });
