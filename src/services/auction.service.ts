@@ -16,6 +16,8 @@ export enum AuctionAnswers {
 
 export async function closeAllEndedAuctions() {
   const auctions = await Auction.find({ end: { $lte: new Date() }, status: "active"});
+  console.log(`Found ${auctions.length} to close`);
+  
   for (const auction of auctions) {
     const { mediaId, bids, userId, bin } = auction;
     if (bids.length === 0) {
