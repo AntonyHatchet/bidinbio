@@ -19,6 +19,18 @@ import getToken from "../util/getToken";
 import { IG_ACCOUNT_ID } from "../util/secrets";
 import { Bid } from "../models/Auction";
 const twenyFourHours = 86400000;
+const answers = [
+  (bid: string, username: string) => `@${username} bid increased to $${bid}!`,
+  (bid: string, username: string) => `@${username} bid raised to ${bid}`,
+  (bid: string, username: string) => `@${username} outbid. Current bid is ${bid}`,
+  (bid: string, username: string) => `@${username} bid has been raised. New bid is ${bid}`,
+  (bid: string, username: string) => `@${username} bid has been increased to ${bid}`,
+  (bid: string, username: string) => `@${username} the new bid is ${bid}`,
+];
+const sizeWords = [
+  'size',
+  'sizes',
+]
 
 interface CommentHook {
   text?: string;
@@ -38,6 +50,11 @@ interface StoryInsightsHook {
   replies: number;
 }
 export const handleCommentsHook = async ({ time, userId, text, commentId }: CommentHook) => {
+  const result = containsStopWords(text);
+  if(result) {
+    return console.log(`Comment ${commentId} is in stop list words`);
+  } 
+  
   const comment = await Comment.findOne({ commentId: commentId });
   if(comment && comment.commentId){
     return console.log(`Comment ${commentId} already exist, do nothing`);
@@ -106,7 +123,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
     });
   }
 
-  if (+auction.price === +auction.startingPrice && +auction.price <= +bid) {
+  if (auction.bids.length === 0 && +auction.price <= +bid) {
     auction.bids.push({
       ammount: +bid,
       username: extendedComment.username,
@@ -266,11 +283,14 @@ function getRandomInt(max: number) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-const answers = [
-  (bid: string, username: string) => `@${username} bid increased to $${bid}!`,
-  (bid: string, username: string) => `@${username} bid raised to ${bid}`,
-  (bid: string, username: string) => `@${username} outbid. Current bid is ${bid}`,
-  (bid: string, username: string) => `@${username} bid has been raised. New bid is ${bid}`,
-  (bid: string, username: string) => `@${username} bid has been increased to ${bid}`,
-  (bid: string, username: string) => `@${username} the new bid is ${bid}`,
-];
+function containsStopWords(message: string) {
+  if(!message) {
+    return false;
+  }
+  for (const word of sizeWords) {
+    if(message.includes(word)){
+      return true;
+    }
+  }
+  return false;
+}

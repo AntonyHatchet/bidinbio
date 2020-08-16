@@ -108,10 +108,3 @@ const goToAdminPage = async (req: Request, res: Response, account: UserDocument,
     accounts
 });
 };
-
-// auctions: {
-//   ended: 0,
-//   active: 0
-// },
-// bets: 0,
-// money: 0  

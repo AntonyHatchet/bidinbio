@@ -22,6 +22,9 @@ export async function closeAllEndedAuctions() {
     console.log(JSON.stringify(auction));
     const { mediaId, bids, userId, bin } = auction;
     if (bids.length === 0) {
+      await sendAuctionEndMessagesWithoutWinner({ mediaId });
+      auction.status = AuctionStatus.finished;
+      await auction.save();
       continue;
     }
     const winner = bids[bids.length - 1];
@@ -68,7 +71,7 @@ export async function sendAuctionEndMessages({ commentId, token, username, media
   });
 }
 
-export async function sendAuctionEndMessagesWithoutWinner({ commentId, token, username, mediaId, ammount, bin }: AuctionEndMessages) {
+export async function sendAuctionEndMessagesWithoutWinner({ mediaId }: AuctionEndMessages) {
   const bidInBioUser = await User.findOne({ "businessAccounts.facebook.id": IG_ACCOUNT_ID });
   const { longLiveToken } = getToken(bidInBioUser, "facebook");
 
