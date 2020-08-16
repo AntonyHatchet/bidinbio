@@ -54,7 +54,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
   if(result) {
     return console.log(`Comment ${commentId} is in stop list words`);
   } 
-  
+
   const comment = await Comment.findOne({ commentId: commentId });
   if(comment && comment.commentId){
     return console.log(`Comment ${commentId} already exist, do nothing`);
@@ -142,7 +142,7 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
     extendedComment.replyed = true;
     await Comment.create(extendedComment);
 
-    if(+auction.price === +auction.startingPrice) {
+    if(auction.bids.length === 0 && +auction.price === +auction.startingPrice) {
       return await replyForComment({ 
         commentId: commentId,
         token: longLiveToken,
@@ -288,7 +288,7 @@ function containsStopWords(message: string) {
     return false;
   }
   for (const word of sizeWords) {
-    if(message.includes(word)){
+    if(message.toLowerCase().includes(word)){
       return true;
     }
   }
