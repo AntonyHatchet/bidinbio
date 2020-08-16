@@ -28,9 +28,9 @@ const answers = [
   (bid: string, username: string) => `@${username} the new bid is ${bid}`,
 ];
 const sizeWords = [
-  'size',
-  'sizes',
-]
+  "size",
+  "sizes",
+];
 
 interface CommentHook {
   text?: string;
