@@ -94,6 +94,7 @@ const goToAdminPage = async (req: Request, res: Response, account: UserDocument,
           name: { $first: "$profile.name" },
           username: { $first: "$profile.username" },
           email: { $first: "$email" },
+          permissions: { $first: "$permissions" },
           auctions: { $first: "$auctions" },
           totalSaleAmount: { 
             $sum: {

@@ -13,26 +13,35 @@ block content
         if(account)
           div
             .upper_picture_container
-              p=account.name
-              a(target="_blank" href=`https://www.instagram.com/${account.username}`)=`@${account.username}`
               img.thumbnail(src=account.avatar, alt=(account.name || account.username))
+              a(target="_blank" href=`https://www.instagram.com/${account.username}`)=`@${account.username}`
+              p=account.name
               br
               br
+              h3 Info
               p=`Total auctions ${account.totalAuctions || 0}`
               p=`Total balance $${account.totalSaleAmount || 0}`
               p=`Active auctions ${account.auctions.filter(auc => auc.status === 'active').length || 0}`
               p=`Finished auctions ${account.auctions.filter(auc => auc.status === 'finished').length || 0}`
               p=`Canceled auctions ${account.auctions.filter(auc => auc.status === 'canceled').length || 0}`
-              p=`Canceled auctions ${account.auctions.filter(auc => auc.status === 'canceled').length || 0}`
-              p Permissions
+              br
+              br
+              h3 Permissions
               if(account.permissions)
-                p=`email ${account.permissions.find(({permission}) => permission === 'email').status || "declined"}`
-                p=`pages_show_list ${account.permissions.find(({permission}) => permission === 'pages_show_list').status || "declined"}`
-                p=`instagram_basic ${account.permissions.find(({permission}) => permission === 'instagram_basic').status || "declined"}`
-                p=`instagram_manage_comments ${account.permissions.find(({permission}) => permission === 'instagram_manage_comments').status || "declined"}`
-                p=`pages_read_engagement ${account.permissions.find(({permission}) => permission === 'pages_read_engagement').status || "declined"}`
-                p=`pages_manage_metadata ${account.permissions.find(({permission}) => permission === 'pages_manage_metadata').status || "declined"}`
-                p=`public_profile ${account.permissions.find(({permission}) => permission === 'public_profile').status || "declined"}`
+                p email: 
+                  b=` ${account.permissions.find(({permission}) => permission === 'email') && account.permissions.find(({permission}) => permission === 'email').status || "declined"}`
+                p pages_show_list: 
+                  b=` ${account.permissions.find(({permission}) => permission === 'pages_show_list') && account.permissions.find(({permission}) => permission === 'pages_show_list').status || "declined"}`
+                p instagram_basic: 
+                  b=` ${account.permissions.find(({permission}) => permission === 'instagram_basic') && account.permissions.find(({permission}) => permission === 'instagram_basic').status || "declined"}`
+                p instagram_manage_comments: 
+                  b=` ${account.permissions.find(({permission}) => permission === 'instagram_manage_comments') && account.permissions.find(({permission}) => permission === 'instagram_manage_comments').status || "declined"}`
+                p pages_read_engagement: 
+                  b=` ${account.permissions.find(({permission}) => permission === 'pages_read_engagement') && account.permissions.find(({permission}) => permission === 'pages_read_engagement').status || "declined"}`
+                p pages_manage_metadata: 
+                  b=` ${account.permissions.find(({permission}) => permission === 'pages_manage_metadata') && account.permissions.find(({permission}) => permission === 'pages_manage_metadata').status || "declined"}`
+                p public_profile: 
+                  b=` ${account.permissions.find(({permission}) => permission === 'public_profile') && account.permissions.find(({permission}) => permission === 'public_profile').status || "declined"}`
               else 
                 b No permissions was granted
 
