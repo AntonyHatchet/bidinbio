@@ -30,13 +30,13 @@ const answers = [
 const sizeWords = [
   "size",
   "sizes",
-  'big', 
-  'bigger',
-  'large',
-  'larger',
-  'small',
-  'smaller',
-  'fit',
+  "big", 
+  "bigger",
+  "large",
+  "larger",
+  "small",
+  "smaller",
+  "fit",
 ];
 
 interface CommentHook {

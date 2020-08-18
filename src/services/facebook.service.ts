@@ -117,3 +117,19 @@ export const subscribeToPageWebhooks = async (pageId: string, token: string) => 
         console.log(JSON.stringify(e));
     }
 };
+
+export const getAPIPermissions = async (accountId: string, token: string) => {
+    try {
+        const { data } = await axios({
+            method: "get",
+            url: `/${accountId}/permissions`,
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+        return data;
+    } catch(e) {
+        console.log("getAPIPermissions");
+        console.log(JSON.stringify(e));
+    }
+};

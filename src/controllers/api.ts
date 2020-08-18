@@ -8,6 +8,7 @@ import {
     getFacebookUser,
     getLongTermUserKey,
     getPageToken,
+    getAPIPermissions,
     subscribeToPageWebhooks,
 } from "../services/facebook.service";
 import { createCommentForMedia, loadIGUser, loadAllMedia } from "../services/instagram.service";
@@ -30,11 +31,18 @@ export const getApi = (req: Request, res: Response) => {
 export const setupAccount = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as UserDocument;
     const token = user.tokens.find((token: AuthToken) => token.kind === "facebook");
+    const longTermToken = await getLongTermUserKey(token.accessToken);
+
     const me = await getFacebookUser(token.accessToken);
+    const { data: permissions } = await getAPIPermissions(user.facebookAccountId, longTermToken);
     const accounts = me.accounts || { data: []};
     const instagramBusinessAccountIds = new Set<string>();
-    const longTermToken = await getLongTermUserKey(token.accessToken);
-    
+    console.log(permissions);
+    user.permissions = permissions;
+
+    await user.save();
+
+    // console.log(user)
     for(const account of accounts.data) {
         const { instagramBusinessAccount } = await getBusinessAccount({ 
             facebookAccountId: account.id, 

@@ -44,6 +44,13 @@ export type UserDocument = mongoose.Document & {
 
     comparePassword: comparePasswordFunction;
     gravatar: (size: number) => string;
+
+    permissions: [
+        {
+            permission: string;
+            status: string;
+        },
+    ];
 };
 
 type comparePasswordFunction = (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void;
@@ -75,7 +82,13 @@ const userSchema = new mongoose.Schema({
     },
     businessAccounts: {
         facebook: Array,
-    }
+    },
+    permissions: [
+        {
+            permission: String,
+            status: String
+        },
+    ]
 }, { timestamps: true });
 
 /**

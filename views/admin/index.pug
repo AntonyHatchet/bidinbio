@@ -18,8 +18,22 @@ block content
               img.thumbnail(src=account.avatar, alt=(account.name || account.username))
               br
               br
-              p=`Active auctions ${account.total.auctions.started || 0}`
-              p=`Ended auctions ${account.total.auctions.ended || 0}`
-              p=`Total bets ${account.total.bets || 0}`
-              p=`Total money income ${account.total.money || 0}`
-          
+              p=`Total auctions ${account.totalAuctions || 0}`
+              p=`Total balance $${account.totalSaleAmount || 0}`
+              p=`Active auctions ${account.auctions.filter(auc => auc.status === 'active').length || 0}`
+              p=`Finished auctions ${account.auctions.filter(auc => auc.status === 'finished').length || 0}`
+              p=`Canceled auctions ${account.auctions.filter(auc => auc.status === 'canceled').length || 0}`
+              p=`Canceled auctions ${account.auctions.filter(auc => auc.status === 'canceled').length || 0}`
+              p Permissions
+              if(account.permissions)
+                p=`email ${account.permissions.find(({permission}) => permission === 'email').status || "declined"}`
+                p=`pages_show_list ${account.permissions.find(({permission}) => permission === 'pages_show_list').status || "declined"}`
+                p=`instagram_basic ${account.permissions.find(({permission}) => permission === 'instagram_basic').status || "declined"}`
+                p=`instagram_manage_comments ${account.permissions.find(({permission}) => permission === 'instagram_manage_comments').status || "declined"}`
+                p=`pages_read_engagement ${account.permissions.find(({permission}) => permission === 'pages_read_engagement').status || "declined"}`
+                p=`pages_manage_metadata ${account.permissions.find(({permission}) => permission === 'pages_manage_metadata').status || "declined"}`
+                p=`public_profile ${account.permissions.find(({permission}) => permission === 'public_profile').status || "declined"}`
+              else 
+                b No permissions was granted
+
+

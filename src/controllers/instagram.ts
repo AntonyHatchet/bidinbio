@@ -95,7 +95,16 @@ const goToAdminPage = async (req: Request, res: Response, account: UserDocument,
           username: { $first: "$profile.username" },
           email: { $first: "$email" },
           auctions: { $first: "$auctions" },
-          totalSaleAmount: { $sum: "$auctions.winner.ammount" },
+          totalSaleAmount: { 
+            $sum: {
+              $sum: "$auctions.winner.ammount"
+            }
+          },
+          totalAuctions: {
+            $sum: {
+              $size: "$auctions"
+            }
+          }
         }
       }
     ]
@@ -105,6 +114,6 @@ const goToAdminPage = async (req: Request, res: Response, account: UserDocument,
   res.render("admin", {
     title: "Admin page",
     account,
-    accounts
+    accounts: aggregated
 });
 };
