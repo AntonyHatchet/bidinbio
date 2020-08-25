@@ -10,6 +10,7 @@ import {
     getPageToken,
     getAPIPermissions,
     subscribeToPageWebhooks,
+    checkPermission,
 } from "../services/facebook.service";
 import { createCommentForMedia, loadIGUser, loadAllMedia } from "../services/instagram.service";
 
@@ -37,12 +38,19 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
     const { data: permissions } = await getAPIPermissions(user.facebookAccountId, longTermToken);
     const accounts = me.accounts || { data: []};
     const instagramBusinessAccountIds = new Set<string>();
+    const permissionGranted = checkPermission(permissions);
+
+    if(!permissionGranted) {
+        return res.render("permissions", {
+            title: "Permission page"
+        });
+    }
+
     console.log(permissions);
     user.permissions = permissions;
 
     await user.save();
 
-    // console.log(user)
     for(const account of accounts.data) {
         const { instagramBusinessAccount } = await getBusinessAccount({ 
             facebookAccountId: account.id, 

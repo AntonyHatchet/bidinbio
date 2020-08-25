@@ -11,6 +11,7 @@ import { loadIGUser, loadAllMedia, createCommentForMedia } from "../services/ins
 import {
   getPageToken,
   subscribeToPageWebhooks,
+  checkPermission,
 } from "../services/facebook.service";
 import { IG_ACCOUNT_ID } from "../util/secrets";
 
@@ -21,9 +22,15 @@ export const getInstagramPage = async (req: Request, res: Response, next: NextFu
   const token = user.tokens.find((token: AuthToken) => token.kind === "facebook");
   const igAccountId = req.params.id;
   const account = await loadIGUser({ igAccountId, token: token.longLiveToken });
-
+  const premissionGranted = await checkPermission(user.permissions);
   if(igAccountId === IG_ACCOUNT_ID) {
     return await goToAdminPage(req, res, account, user._id);
+  }
+
+  if(!premissionGranted) {
+    return res.render("permissions", {
+      title: "Permission page"
+    });
   }
 
   const auctions = await Auction.find({ userId: igAccountId });
@@ -62,8 +69,8 @@ export const createInstagramComment = async (req: Request, res: Response) => {
   res.send(result);
 };
 
-const goToAdminPage = async (req: Request, res: Response, account: UserDocument, id: string) => {
-  const accounts = (await User.find({ _id: { "$ne": id }})).map(user => ({
+const goToAdminPage = async (req: Request, res: Response, account: UserDocument, currentUserId: string) => {
+  const accounts = (await User.find({ _id: { "$ne": currentUserId }})).map(user => ({
     avatar: user.profile.picture,
     username: user.profile.username,
     name: user.profile.name,
@@ -77,7 +84,7 @@ const goToAdminPage = async (req: Request, res: Response, account: UserDocument,
   const aggregated = await User.aggregate(
     [
       {
-        $match: { _id: { "$ne": id }}
+        $match: { _id: { "$ne": currentUserId }}
       },
       {
         "$lookup": {
@@ -110,11 +117,12 @@ const goToAdminPage = async (req: Request, res: Response, account: UserDocument,
       }
     ]
   );
+
   console.log(aggregated);
 
   res.render("admin", {
     title: "Admin page",
     account,
     accounts: aggregated
-});
+  });
 };
