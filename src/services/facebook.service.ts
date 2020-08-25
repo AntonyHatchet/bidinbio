@@ -13,14 +13,14 @@ const FacebookUserAttributes = [
     "accounts"
 ];
 const requestedPermissions = [
-    'public_profile',
-    'pages_manage_metadata',
-    'pages_read_engagement',
-    'instagram_manage_comments',
-    'instagram_basic',
-    'pages_show_list',
-    'email',
-]
+    "public_profile",
+    "pages_manage_metadata",
+    "pages_read_engagement",
+    "instagram_manage_comments",
+    "instagram_basic",
+    "pages_show_list",
+    "email",
+];
 
 export const getBusinessAccount = async ({ facebookAccountId, token, userId }: {facebookAccountId: string; token: string; userId: string}) => {
     if(!facebookAccountId) {
@@ -144,7 +144,10 @@ export const getAPIPermissions = async (accountId: string, token: string) => {
     }
 };
 
-export const checkPermission = (permissions: any) => {
-    const grantedPermissions = permissions.map(({ permission, status }) => status === 'granted' && permission);
-    return requestedPermissions.every(rqp => grantedPermissions.includes(rqp));
-}
+export const checkPermission = (permissions: {
+    permission: string;
+    status: string;
+}[]) => {
+    const grantedPermissions = permissions.map(({ permission, status }) => status === "granted" && permission);
+    return requestedPermissions.every(requestedPermission => grantedPermissions.includes(requestedPermission));
+};
