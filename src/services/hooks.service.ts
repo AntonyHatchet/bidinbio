@@ -57,20 +57,9 @@ interface StoryInsightsHook {
   replies: number;
 }
 export const handleCommentsHook = async ({ time, userId, text, commentId }: CommentHook) => {
-  const result = containsStopWords(text);
-  if(result) {
-    return console.log(`Comment ${commentId} is in stop list words`);
-  } 
-
   const comment = await Comment.findOne({ commentId: commentId });
   if(comment && comment.commentId){
     return console.log(`Comment ${commentId} already exist, do nothing`);
-  }
-
-  const { bid, bin } = getBidFromComment(text);
-
-  if(!bid && !bin) {
-    return console.log(`Comment ${commentId} is not a bid, ignore it`);
   }
 
   const user = await User.findOne({ "businessAccounts.facebook.id": userId });
@@ -79,7 +68,6 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
   }
 
   const { longLiveToken, accessToken } = getToken(user, "facebook");
-
   const extendedComment = await loadComment(commentId, longLiveToken);
 
   if(!extendedComment) {
@@ -101,6 +89,17 @@ export const handleCommentsHook = async ({ time, userId, text, commentId }: Comm
   if(!auction.userId) {
     auction.userId = userId;
     await auction.save();
+  }
+
+  const { bid, bin } = getBidFromComment(text);
+
+  if(!bid && !bin) {
+    return console.log(`Comment ${commentId} is not a bid, ignore it`);
+  }
+
+  const result = containsStopWords(text);
+  if(result) {
+    return console.log(`Comment ${commentId} is in stop list words`);
   }
 
   if (auction.bin && (+auction.bin <= +bid || bin)) {
