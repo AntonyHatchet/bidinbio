@@ -53,6 +53,8 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
         user.availableAuctions = 10;
     }
 
+    console.log(user.availableAuctions);
+
     await user.save();
 
     for(const account of accounts.data) {
