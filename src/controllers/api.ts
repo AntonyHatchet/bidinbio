@@ -49,6 +49,10 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
     console.log(permissions);
     user.permissions = permissions;
 
+    if(user.availableAuctions === undefined) {
+        user.availableAuctions = 10;
+    }
+
     await user.save();
 
     for(const account of accounts.data) {
