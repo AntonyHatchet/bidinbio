@@ -197,11 +197,6 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
     return console.log(`Auction for media ${mediaId} already exist!`);
   }
 
-  const user = await User.findOne({ "businessAccounts.facebook.id": userId });
-  if (!user) {
-    return console.log(`User for key ${userId} not found`);
-  }
-
   const bidInBioUser = await User.findOne({ "businessAccounts.facebook.id": IG_ACCOUNT_ID });
   const { longLiveToken } = getToken(bidInBioUser, "facebook");
 
@@ -210,9 +205,30 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
     return console.log("Cannot load media");
   }
 
+  if(!extendedMedia.owner.id) {
+    return console.log("Unknown user");
+  }
+
   const auctionAtributes = getAuctionAttributes(extendedMedia.caption);
   if(!auctionAtributes) {
     return console.log("No auction attributes found in message");
+  }
+
+
+  const user = await User.findOne({ "businessAccounts.facebook.id": extendedMedia.owner.id });
+  if (!user) {
+    return console.log(`User for key ${userId} not found`);
+  }
+
+  if(user.availableAuctions < 1) {
+    await replyForMention({
+      userId: IG_ACCOUNT_ID,
+      media_id: extendedMedia.id,
+      token: longLiveToken,
+      message: 'Looks like you ran out of credit, please top up!',
+    });
+
+    return console.log('Looks like you ran out of credit, please top up!');
   }
 
   console.log("media", { extendedMedia });

@@ -29,6 +29,8 @@ export type UserDocument = mongoose.Document & {
     facebookAccountId: string;
     tokens: AuthToken[];
 
+    availableAuctions: number;
+
     profile: {
         name: string;
         gender: string;
@@ -71,6 +73,8 @@ const userSchema = new mongoose.Schema({
     twitterAccountId: String,
     googleAccountId: String,
     tokens: Array,
+
+    availableAuctions: Number,
 
     profile: {
         name: String,
