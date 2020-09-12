@@ -220,7 +220,7 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
     return console.log(`User for key ${userId} not found`);
   }
 
-  if(user.availableAuctions < 1) {
+  if(!user.availableAuctions || user.availableAuctions < 1) {
     await replyForMention({
       userId: IG_ACCOUNT_ID,
       media_id: extendedMedia.id,
@@ -232,6 +232,9 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
   }
 
   console.log("media", { extendedMedia });
+
+  user.availableAuctions = user.availableAuctions - 1;
+  await user.save();
 
   const newAuction = await Auction.create({
     mediaId: extendedMedia.id,
