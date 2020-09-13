@@ -48,6 +48,7 @@
     "passport-instagram": "^1.0.0",
     "passport-local": "^1.0.0",
     "pug": "^2.0.4",
+    "stripe": "^8.95.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {

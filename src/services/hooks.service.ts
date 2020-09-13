@@ -225,10 +225,10 @@ export const handleMentionsHook = async ({ time, userId, mediaId }: MentionHook)
       userId: IG_ACCOUNT_ID,
       media_id: extendedMedia.id,
       token: longLiveToken,
-      message: 'Looks like you ran out of credit, please top up!',
+      message: "Looks like you ran out of credit, please top up!",
     });
 
-    return console.log('Looks like you ran out of credit, please top up!');
+    return console.log("Looks like you ran out of credit, please top up!");
   }
 
   console.log("media", { extendedMedia });

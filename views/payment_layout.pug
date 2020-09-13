@@ -1,0 +1,30 @@
+doctype html
+html(lang='')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title #{title} - Bid in bio
+    meta(name='description', content='')
+    meta(name='theme-color' content='#4DA5F4')
+    meta(name='csrf-token', content=_csrf)
+    link(rel='shortcut icon', href='/images/favicon.png')
+    link(rel='stylesheet', href='/css/main.css')
+    script(async src="https://js.stripe.com/v3/")
+    script(async src="https://www.googletagmanager.com/gtag/js?id=UA-171053884-1")
+    script(src="https://www.googletagmanager.com/gtag/js?id=UA-171053884-1")
+    script
+      include google.js
+
+  body
+    block content
+
+    script(src='/js/lib/moment.min.js')
+    script(src='/js/lib/jquery-3.1.1.min.js')
+    script(src='/js/lib/bootstrap.min.js')
+    script(src='/js/lib/datepicker.min.js')
+    script(src='/js/lib/stripe.js')
+    script(async defer src="https://buttons.github.io/buttons.js")
+    noscript
+      iframe(src="https://www.googletagmanager.com/ns.html?id=GTM-MJT84MQ" height="0" width="0" style="display:none;visibility:hidden")
+

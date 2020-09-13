@@ -22,6 +22,7 @@ import * as userController from "./controllers/user";
 import * as apiController from "./controllers/api";
 import * as auctionController from "./controllers/auction";
 import * as instagramController from "./controllers/instagram";
+import * as stripeController from "./controllers/stripe";
 import { pollingMentionsAndComments } from "./services/pooling.service";
 
 
@@ -47,7 +48,7 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useCreateIndex: true, useUni
 app.set("port", process.env.PORT || 3000);
 app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "pug");
-app.use(compression());
+// app.use(compression());
 app.use(bodyParser.json({
     verify: (req: IncomingMessage & { rawBody: any }, res, buf) => {
         req.rawBody = buf;
@@ -113,15 +114,24 @@ app.post("/auction/backed/:mediaId", passportConfig.isAuthenticated, auctionCont
 app.get("/instagram/:id", passportConfig.isAuthenticated, instagramController.getInstagramPage);
 app.post("/instagram/:mediaId", passportConfig.isAuthenticated, instagramController.createInstagramComment);
 
+// Stripe
+
+app.get("/payments", passportConfig.isAuthenticated, stripeController.getPaymentPage);
+app.get("/payments/setup", passportConfig.isAuthenticated, stripeController.setupPayment);
+app.post("/payments/create-checkout-session", passportConfig.isAuthenticated, stripeController.createCheckoutSession);
+app.get("/payments/success", passportConfig.isAuthenticated, stripeController.paymentSuccess);
+app.get("/payments/failed", passportConfig.isAuthenticated, stripeController.paymentFailed);
+
 /**
  * API examples routes.
  */
 app.get("/api", apiController.getApi);
-app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.setupAccount);
+app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.showMainPage);
 app.post("/api/v1/hooks/instagram", hooksController.authorizeHook, hooksController.hookRouter);
 app.get("/api/v1/hooks/instagram", hooksController.authorizeHook, (req, res) => {
     res.send(req.query["hub.challenge"]);
 });
+app.post("/api/v1/hooks/stripe", bodyParser.raw({type: "application/json"}), stripeController.stripeHook);
 
 const facebookPermision = [
     "pages_manage_metadata",

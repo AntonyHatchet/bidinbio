@@ -29,7 +29,10 @@ export const getApi = (req: Request, res: Response) => {
  * GET /api/facebook
  * Facebook API example.
  */
-export const setupAccount = async (req: Request, res: Response, next: NextFunction) => {
+export const showMainPage = async (req: Request, res: Response) => {
+    return setupAccount(req, res);
+};
+export const setupAccount = async (req: Request, res: Response, payment?: string) => {
     const user = req.user as UserDocument;
     const token = user.tokens.find((token: AuthToken) => token.kind === "facebook");
     const longTermToken = await getLongTermUserKey(token.accessToken);
@@ -76,7 +79,8 @@ export const setupAccount = async (req: Request, res: Response, next: NextFuncti
     
     res.render("api/facebook", {
         title: "Facebook API",
-        profile: {...me, IGUsers}
+        profile: {...me, IGUsers},
+        payment
     });
 };
 

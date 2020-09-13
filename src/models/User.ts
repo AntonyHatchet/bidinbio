@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt-nodejs";
 import crypto from "crypto";
 import mongoose from "mongoose";
+import Stripe from "stripe";
 
 //@typescript-eslint/interface-name-prefix
 export interface IGUser {
@@ -30,6 +31,7 @@ export type UserDocument = mongoose.Document & {
     tokens: AuthToken[];
 
     availableAuctions: number;
+    stripeCustomerId: string;
 
     profile: {
         name: string;
@@ -75,7 +77,8 @@ const userSchema = new mongoose.Schema({
     tokens: Array,
 
     availableAuctions: Number,
-
+    stripeCustomerId: String,
+    
     profile: {
         name: String,
         gender: String,

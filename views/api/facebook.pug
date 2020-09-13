@@ -6,6 +6,10 @@ block content
       .upper_picture_container
         img.thumbnail(src=profile.profile_picture_url || `https://graph.facebook.com/${profile.id}/picture?type=large`, alt=(profile.name || profile.username))
       h4= profile.name
+      if (payment == 'success')
+        h1 Payment success
+      if (payment == 'failed')
+        h1 Payment failed
 
     p Below you should be able to see a list of all Instagram accounts you've linked to bidin.bio. Select one to start automating the bidding.
     

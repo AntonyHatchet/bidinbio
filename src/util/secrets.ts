@@ -17,6 +17,12 @@ export const MONGODB_URI = prod ? process.env["MONGODB_URI"] : process.env["MONG
 export const FACEBOOK_ID = prod ? process.env["FACEBOOK_ID"] : process.env["FACEBOOK_ID_LOCAL"];
 export const FACEBOOK_SECRET = prod ? process.env["FACEBOOK_SECRET"] : process.env["FACEBOOK_SECRET_LOCAL"];
 export const IG_ACCOUNT_ID = process.env["IG_ACCOUNT_ID"];
+export const STRIPE_API_KEY = process.env["STRIPE_API_KEY"];
+export const STRIPE_WEBHOOK_SECRET = process.env["STRIPE_WEBHOOK_SECRET"];
+export const STRIPE_PUBLISHABLE_KEY = process.env["STRIPE_PUBLISHABLE_KEY"];
+export const BASIC_PRICE_ID = process.env["BASIC_PRICE_ID"];
+export const MID_PRICE_ID = process.env["MID_PRICE_ID"];
+export const PRO_PRICE_ID = process.env["PRO_PRICE_ID"];
 
 if (!SESSION_SECRET) {
     logger.error("No client secret. Set SESSION_SECRET environment variable.");
