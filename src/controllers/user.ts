@@ -17,7 +17,7 @@ import "../config/passport";
  */
 export const getLogin = (req: Request, res: Response) => {
     if (req.user) {
-        return res.redirect("/api/facebook");
+        return res.redirect("home");
     }
     res.render("account/login", {
         title: "Login"

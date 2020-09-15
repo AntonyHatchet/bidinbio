@@ -97,6 +97,7 @@ app.use(
  * Primary app routes.
  */
 app.get("/", userController.getLogin);
+app.get("/home", passportConfig.isAuthenticated, apiController.showMainPage);
 app.get("/login", userController.getLogin);
 app.get("/logout", userController.logout);
 app.get("/account", passportConfig.isAuthenticated, userController.getAccount);

@@ -1,0 +1,20 @@
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+  button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarToggler' aria-controls='navbarToggler' aria-expanded='false' aria-label='Toggle navigation')
+    span.navbar-toggler-icon
+  a.navbar-brand(href='#') Bid In Bio
+  #navbarToggler.collapse.navbar-collapse
+    ul.navbar-nav.mr-auto.mt-2.mt-lg-0
+      if (route === 'home')
+        li.nav-item.active
+          a.nav-link(href='/home')
+            | Home 
+      else
+        li.nav-item
+          a.nav-link(href='/home')
+            | Home 
+      if (route === 'payments')
+        li.nav-item.active
+          a.nav-link(href='/payments') Payments
+      else
+        li.nav-item
+          a.nav-link(href='/payments') Payments

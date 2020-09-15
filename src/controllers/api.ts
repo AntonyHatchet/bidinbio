@@ -25,10 +25,6 @@ export const getApi = (req: Request, res: Response) => {
     });
 };
 
-/**
- * GET /api/facebook
- * Facebook API example.
- */
 export const showMainPage = async (req: Request, res: Response) => {
     return setupAccount(req, res);
 };
@@ -77,10 +73,12 @@ export const setupAccount = async (req: Request, res: Response, payment?: string
         IGUsers.push(account);
     }
     
-    res.render("api/facebook", {
+    res.render("home/index", {
         title: "Facebook API",
         profile: {...me, IGUsers},
-        payment
+        payment,
+        route: "home",
+        availableAuctions: user.availableAuctions,
     });
 };
 

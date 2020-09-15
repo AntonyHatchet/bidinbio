@@ -21,6 +21,7 @@ const stripe = new Stripe(STRIPE_API_KEY, {
 export const getPaymentPage = async (req: Request, res: Response) => {
   res.render("payment", {
     title: "Payment page",
+    route: "payments",
   }); 
 };
 export const stripeHook = async (req: Request & { rawBody: string}, res: Response ) => {

@@ -1,0 +1,36 @@
+extends ../layout
+
+block content
+  .content_container
+    if (payment == 'success')
+      .alert.alert-success.alert-dismissible.fade.show 
+        strong Payment success
+        button.close(data-dismiss="alert" aria-label="Close")
+          span(aria-hidden="true") &times;
+    if (payment == 'failed')
+      .alert.alert-danger.alert-dismissible.fade.show 
+        strong Payment failed
+        button.close(data-dismiss="alert" aria-label="Close")
+          span(aria-hidden="true") &times;
+    .header_container
+      .upper_picture_container
+        img.thumbnail(src=profile.profile_picture_url || `https://graph.facebook.com/${profile.id}/picture?type=large`, alt=(profile.name || profile.username))
+      h4= profile.name
+      h5= `Auctions left: ${availableAuctions || 0}`
+    if (!availableAuctions || availableAuctions < 1)
+      p Looks like you’ve used all your auctions. Please tap “Payments” to buy more credit.
+      a.btn.btn-lg.btn-success(href='/payments') Payments
+    else
+      p Below you should be able to see a list of all Instagram accounts you've linked to bidin.bio. Select one to start automating the bidding.
+      
+      .page-header
+        h2
+          i.fa.fa-instagram(style='color: #335397')
+          | Instagram accounts
+      .btn-group.btn-group-justified
+        each igUser in profile.IGUsers
+          a.btn.btn-primary(href=`/instagram/${igUser.id}`)
+            i.fa.fa-check-square-o
+            | #{igUser.username}
+    p If you can't see the expected account or something isn't working, shoot us a message at 
+      a(href='https://www.instagram.com/bidin.bio/') @bidin.bio

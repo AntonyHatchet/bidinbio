@@ -18,6 +18,10 @@ export const getAuction = async (req: Request, res: Response) => {
   const auctionId = req.params.auctionId;
   const auction = await Auction.findOne({ _id: auctionId });
 
+  if(!user.availableAuctions || user.availableAuctions < 1) {
+    return res.redirect("../home");
+  }
+  
   return res.render("auction/index", {
     title: "Automation",
     auction

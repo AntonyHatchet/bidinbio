@@ -33,6 +33,10 @@ export const getInstagramPage = async (req: Request, res: Response, next: NextFu
     });
   }
 
+  if(!user.availableAuctions || user.availableAuctions < 1) {
+    return res.redirect("../home");
+  }
+
   const auctions = await Auction.find({ userId: igAccountId });
 
   console.log(`Get subscription for user ${user._id}`);
